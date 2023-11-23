@@ -45,17 +45,25 @@
 
 
 
-    \newenvironment{SVerlauf}[2]{%Anfang
-        \subsubsection{Stundenverlauf #2}
+    \newcommand{\defaultWidth}{12}
+
+    \NewDocumentEnvironment{SVerlauf}{ O{12} g }
+    {% Begin code
+        \subsubsection{Stundenverlauf%
+            \IfValueT{#2}{\ #2}}
         \begin{adjustbox}{width=\textwidth,center}
             \tabular{|c|l|p{#1 cm}|l|l|}
                 \hline
                 \textbf{Zeit} & \textbf{Thema} &\textbf{Ausführung/Plan} &\textbf{Methode}  & \textbf{Medien}  \\
                 \hline
-        }{
-                \endtabular 
+    }
+    {% End code
+            \endtabular 
         \end{adjustbox}
     }
+    
+    
+
     \newcommand{\umbruch}[1]{\begin{tabular}[c]{@{}l@{}} #1 \end{tabular}}
 
 

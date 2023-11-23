@@ -1,0 +1,21 @@
+%Skript Commands 
+    %Arbeitsblatt einbilden
+    \newcommand{\Path}{}
+    \newcommand{\setPath}[1]{\renewcommand{\Path}{#1}}
+    % Define a command that checks if the Path is set
+    \newcommand{\AB}{
+        %Mach auch das mitKeyVals 
+    \ifx\Path\empty
+        \PackageError{yourpackage}{You must set \protect\Path before using the commands}{}
+    \else
+        %Your group of commands here
+        %\newcommand\AB[1]{\includepdf[pages=-]{#1/#1}\addcontentsline{toc}{subsection}{#1}}
+        %\newcommand\ABklein[1]{\includepdf[pages=-, nup=1x2, doublepages,landscape,frame]{\Path/#1/#1}\addcontentsline{toc}{subsection}{#1}}
+        %\newcommand\ABkleinl[1]{\includepdf[pages=-,nup=1x2, doublepages,frame]{\Path/#1/#1}\addcontentsline{toc}{subsection}{#1}}
+    \fi
+  }
+    
+
+    
+    %Tabelle
+    \newcommand{\ze}{\\ \hline}

@@ -1,0 +1,143 @@
+%Methoden-------------------------
+\newcommand{\lsg}{L-S G.}
+\newcommand{\lv}{LV}
+\newcommand{\ea}{EA}
+\newcommand{\pa}{PA}
+\newcommand{\ga}{GA}
+%Tabelle-------------------------
+\newcommand{\ze}{\\ \hline}
+
+%Einheiten-------------------------
+
+
+
+%Arbeitsblatt einbilden
+\newcommand\AB[1]{\includepdf[pages=-]{#1/#1}\addcontentsline{toc}{subsection}{#1}}
+\newcommand\ABklein[1]{\includepdf[pages=-, nup=1x2, doublepages,landscape,frame]{AB_Physik/#1/#1}\addcontentsline{toc}{subsection}{#1}}
+\newcommand\ABkleinl[1]{\includepdf[pages=-,nup=1x2, doublepages,frame]{AB_Physik/#1/#1}\addcontentsline{toc}{subsection}{#1}}
+
+\newcommand{\mitte}{ \hfill\vrule\hfill\hspace{0.1em} }%FÜr die Mitte zwischen zwei Minipages
+
+
+\newcommand{\grid}[1]{
+\def\dist{#1 cm - 3cm}
+\begin{tikzpicture}
+\draw[step=0.5cm,color=gray] (-7,-3) grid (8,\dist);
+\end{tikzpicture}
+}
+
+
+
+
+% Image Command
+
+\makeatletter
+\newcounter{imagesourcecounter}
+\setcounter{imagesourcecounter}{1}
+
+\newcommand{\mycaption}{}
+\define@key{image}{width}{\def\image@width{#1}}
+\define@key{image}{caption}{\def\image@caption{#1}}
+\define@key{image}{source}{\def\image@source{#1}}
+\define@key{image}{position}{\def\image@position{#1}}
+\define@key{image}{overhang}{\def\image@overhang{#1}}
+\define@key{image}{line}{\def\image@line{#1}}
+\setkeys{image}{width=5cm, caption=, source=, position=, overhang=, line =  }
+
+
+
+% Define a command to conditionally include the optional argument for wrapfigure
+\NewDocumentCommand{\wrapfigureopt}{m m O{} m}{%
+  \ifdefempty{#1}{%
+    \begin{wrapfigure}{#2}{#3}
+      #4
+    \end{wrapfigure}%
+  }{%
+    \begin{wrapfigure}[#1]{#2}[#3]{#3}
+      #4
+    \end{wrapfigure}%
+  }%
+}
+
+
+
+
+\newcommand{\image}[2][]{%
+\setkeys{image}{width=5cm, caption=, source=, position=, overhang=0.5 cm, line =  }
+  \setkeys{image}{#1}% Set the keys
+  \ifdefempty{\image@caption}{
+    \renewcommand{\mycaption}{}
+  }{
+    \ifdefempty{\image@source}{
+      \renewcommand{\mycaption}{\protect\caption{\image@caption}}
+    }{
+      \renewcommand{\mycaption}{\protect\caption{\image@caption\protect\footnotemark}}
+      \footnotetext[\theimagesourcecounter]{Quelle: \url{\image@source}}
+      \stepcounter{imagesourcecounter}
+    }
+  }
+  \ifdefempty{\image@position}{
+    % No position specified, use figure
+    \begin{figure}
+      \centering
+      \includegraphics[width=\image@width]{#2}
+      \mycaption
+    \end{figure}
+  }{
+    % Position specified, use wrapfigure
+    \wrapfigureopt{\image@line}{\image@position}[\dimexpr\image@width+2\columnsep]{%
+      \centering
+      \includegraphics[width=\dimexpr\linewidth-2\columnsep]{#2}
+      \begin{minipage}{\dimexpr\linewidth-2\columnsep} % Ensure caption width doesn't exceed image width
+        \mycaption
+      \end{minipage}
+    }%
+  }%
+}
+
+\makeatother
+
+% Define a new command \multiimage with optional arguments
+\makeatletter
+\define@key{multiimage}{caption}{\def\mycaption{#1}} % Define a key for the caption
+\define@key{multiimage}{label}{\def\mylabel{#1}} % Define a key for the label
+\define@key{multiimage}{rescale}{\def\rescale{#1}} % Define a key for the rescale
+\makeatother
+
+\newcommand{\multiimage}[2][]{ % Optional arguments are provided as a key-value list
+  \setkeys{multiimage}{caption=, label=, rescale=1, #1} % Set default values and apply user-provided values
+
+  \ifx\rescale\@empty
+    \def\rescale{1}
+  \fi
+
+  \ifx\rescale\empty
+    \def\rescale{1}
+  \fi
+  
+  \readlist\mylist{#2} % Read and store the elements of the list
+
+  % Calculate the width of each subfigure based on the number of elements and rescale factor
+  \newlength{\subfigurewidth}
+  \setlength{\subfigurewidth}{\dimexpr(0.8\linewidth/\mylistlen)\relax}
+
+  \begin{figure}[h!]
+    \centering
+    \foreachitem\i\in\mylist{
+      \begin{subfigure}{\subfigurewidth} % Adjust the width dynamically
+        \centering
+        \includegraphics[width=\linewidth]{\i}
+        \caption{} % Use the provided caption or the default caption
+      \end{subfigure}%
+    }
+    \caption{\mycaption}
+    \label{\mylabel} % Use the provided label or the default label for the figure label
+  \end{figure}
+}
+
+
+
+
+
+
+

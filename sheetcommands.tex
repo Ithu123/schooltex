@@ -1,0 +1,149 @@
+%%%Counter
+\newcounter{Aufgabe}
+\newcounter{Loesung}
+%\setcounter{Loesung}{1}
+
+\newcounter{TA}
+\setcounter{TA}{1}
+
+\newcounter{TL}
+\setcounter{TL}{1}
+
+\newcount\myvar
+
+
+%%% Angaben für Symbolzahlen
+\newcommand{\schriftlich}{1}
+\newcommand{\mitTR}{2}
+\newcommand{\ohneTR}{3}
+\newcommand{\Aufg}{Aufgabe\,}
+
+%Stufenaufgaben
+\newcommand{\einS}{991}
+\newcommand{\zweiS}{992}
+\newcommand{\dreiS}{993}
+
+
+%%%Hier fängt die Aufgabenumgebung an
+
+
+
+\makeatletter
+\define@key{AufgabeKeys}{symbol}{%
+    \ifcase#1
+        \def\margin_symbol{}% 0
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/contract}}}}% 1
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc}}}}% 2
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc}}}}% 3
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc} \includegraphics[height=8pt]{Icons/contract}}}}% 12
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc} \includegraphics[height=8pt]{Icons/contract}}}}% 21
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc} \includegraphics[height=8pt]{Icons/contract}}}}% 13
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc} \includegraphics[height=8pt]{Icons/contract}}}}% 31
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar$}}}% 991
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar\bigstar$}}}% 992
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar\bigstar\bigstar$}}}% 993
+    \else
+        \def\margin_symbol{}% Default
+    \fi
+}
+
+\newenvironment{Aufgabe}[1][1]{%
+    \setkeys{AufgabeKeys}{symbol=#1}% Set the symbol based on the argument
+
+    % Here begins the actual exercise
+    \paragraph{\margin_symbol\Aufg \theAufgabe} \setcounter{TA}{1} \refstepcounter{Aufgabe}
+}{}
+
+\newcommand{\teilaufgabe}[1]{%
+    \setlength{\parskip}{0.3em}
+    \begin{addmargin}[1em]{0em}
+        \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#1}
+    \end{addmargin}
+}
+\makeatother
+
+
+
+
+
+
+
+
+
+
+
+\newenvironment{Loesung}{
+    \paragraph{Lösung \theLoesung}  \setcounter{TL}{1} \refstepcounter{Loesung}
+}{ }
+%\newtheorem{Aufgabe}[\theAufgabe]{Aufgabe}{}
+\newcommand{\teilloesung}[1]{\setlength{\parskip}{0.3em}\begin{addmargin}[1em]{0em}  \parbox[t]{0.6cm}{\textbf{\alph{TL})}}\refstepcounter{TL} \parbox[t]{0.9\linewidth}{#1} \end{addmargin} }
+
+
+
+\newcommand{\Aufgabeauf}[1]{
+    \myvar=#1
+
+    \ifnum\myvar=1 % Ist die Variable 1?
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/contract}}}}
+    \else \relax % Wenn nicht, bleib locker
+    \fi
+
+
+    %\mitTR
+    \ifnum\myvar=2
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc}}}}
+    \else \relax
+    \fi
+
+    %\ohneTR
+    \ifnum\myvar=3
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc}}}}
+    \else \relax
+    \fi
+
+    %Combo!schriftlich mitTR
+    \ifnum\myvar=12
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc} \includegraphics[height=8pt]{Icons/contract}}}}
+    \else \relax
+    \fi
+    \ifnum\myvar=21
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc} \includegraphics[height=8pt]{Icons/contract}}}}
+    \else \relax
+    \fi
+    %Combo! Schriftlich ohne TR
+    \ifnum\myvar=13
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc} \includegraphics[height=8pt]{Icons/contract}}}}
+    \else \relax
+    \fi
+    \ifnum\myvar=31
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc} \includegraphics[height=8pt]{Icons/contract}}}}
+    \else \relax
+    \fi
+
+    \ifnum\myvar=991
+        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar$}}}
+    \else \relax
+    \fi
+    \ifnum\myvar=992
+        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar\bigstar$}}}
+    \else \relax
+    \fi
+    \ifnum\myvar=993
+        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar\bigstar\bigstar$}}}
+    \else \relax
+    \fi
+    \paragraph{\margin_symbol\Aufg \theAufgabe}  \setcounter{TA}{1} \refstepcounter{Aufgabe}  
+}
+
+\newcommand{\Aufgabezu}{ }
+

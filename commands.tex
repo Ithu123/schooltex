@@ -13,12 +13,13 @@
 
 % A 0.5cm grid at given thingy
 \newcommand{\grid}[1]{
-\def\dist{#1 cm - 3cm}
-\begin{tikzpicture}
-\draw[step=0.5cm,color=gray] (-7,-3) grid (8,\dist);
-\end{tikzpicture}
+  \par
+  \vspace{\baselineskip}
+  \noindent
+  \begin{tikzpicture}
+    \draw[step=0.5cm, color=gray] (0,0) grid (\linewidth,#1);
+  \end{tikzpicture}
 }
-
 
 
 

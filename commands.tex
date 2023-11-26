@@ -15,22 +15,20 @@
 % Define a command for rounding down to the nearest lower multiple of 0.5
 
 
+\newcommand{\rounddowncm}[1]{%
+  \pgfmathtruncatemacro{\result}{int(floor(#1*2*0.0352778))/2}%
+}
 
-\newcommand{\rounddowncm}[1]{\pgfmathparse{int(floor(#1*2*0.0352778))/2}\pgfmathresult}
-
-\newcommand{\grid}[1]{
-  \uselengthunit{cm}
+\newcommand{\grid}[1]{%
   \par
   \vspace{\baselineskip}
   \noindent
   \begin{tikzpicture}
-    \draw[step=0.5cm, color=gray] (0,0) grid (\linewidth,#1);
-  \end{tikzpicture}
-  \par 
+    \rounddowncm{\textwidth}
+    \draw[step=0.5cm, color=gray] (0,0) grid (\result , #1 );
+  \end{tikzpicture}%
+  \par
 }
-
-
-
 
 
 

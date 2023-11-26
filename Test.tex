@@ -4,7 +4,7 @@
 \usepackage[german]{babel}
 \usepackage{hyperref}
 \declarePath{.}
-
+\uselengthunit{cm}
 \begin{document}
 \begin{SVerlauf}{Thema}
 10' & Einstieg & Das wäre der Einstieg & & \ze
@@ -31,11 +31,26 @@ Test Penis
 
 \begin{Loesung}
     tes
+    \grid{5}
+    \blindtext
 \end{Loesung}
+
+% Example usage
+\newcommand{\inputNumber}{\the\textwidth}
+\newcommand{\roundedNumber}{\rounddowncm{\inputNumber}}
+
+Input: \inputNumber
+Rounded down to the nearest lower multiple of 0.5: \roundedNumber
+
+
 
 \begin{Loesung}
     tes2
 \end{Loesung}
+\newpage
+\blindtext
+
+
 
 \image[source = www.example.de]{Atwood2}
 \image[width = 6cm, caption = Eine Abbildung mit Caption und Quelle, source = www.example.de]{Atwood2}

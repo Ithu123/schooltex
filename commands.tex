@@ -12,13 +12,21 @@
 % \newcommand{\mitte}{ \hfill\vrule\hfill\hspace{0.1em} }%FÜr die Mitte zwischen zwei Minipages
 
 % A 0.5cm grid at given thingy
+% Define a command for rounding down to the nearest lower multiple of 0.5
+
+
+
+\newcommand{\rounddowncm}[1]{\pgfmathparse{int(floor(#1*2*0.0352778))/2}\pgfmathresult}
+
 \newcommand{\grid}[1]{
+  \uselengthunit{cm}
   \par
   \vspace{\baselineskip}
   \noindent
   \begin{tikzpicture}
     \draw[step=0.5cm, color=gray] (0,0) grid (\linewidth,#1);
   \end{tikzpicture}
+  \par 
 }
 
 

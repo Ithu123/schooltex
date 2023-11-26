@@ -15,20 +15,32 @@
 % Define a command for rounding down to the nearest lower multiple of 0.5
 
 
-\newcommand{\rounddowncm}[1]{%
-  \pgfmathtruncatemacro{\result}{int(floor(#1*2*0.0352778))/2}%
+\newlength{\remainingheight} % Define a length variable to store the remaining height
+
+\newcommand{\rounddowncm}[2][\ergeb]{%
+  \pgfmathtruncatemacro{#1}{int(floor(#2*2*0.0352778))/2}%
 }
 
-\newcommand{\grid}[1]{%
+\newcommand{\grid}[1][0]{% Default height is set to 0
   \par
   \vspace{\baselineskip}
   \noindent
+  % Calculate the remaining height if no height is provided
+  \ifnum#1=0
+    \setlength{\remainingheight}{\dimexpr\textheight-\pagetotal-\baselineskip}
+  \else
+    \setlength{\remainingheight}{#1}
+  \fi
   \begin{tikzpicture}
     \rounddowncm{\textwidth}
-    \draw[step=0.5cm, color=gray] (0,0) grid (\result , #1 );
+    \edef\myresult{\ergeb} % Expanding the \ergeb variable
+    \draw[step=0.5cm, color=gray] (0,0) grid (\myresult + 0.5, \remainingheight);
+    % You can use the \myresult and \remainingheight values for further calculations or display
+    %\node[anchor=south] at (\myresult + 0.75, \remainingheight) {\textbf{Width: \myresult cm}};
   \end{tikzpicture}%
   \par
 }
+
 
 
 

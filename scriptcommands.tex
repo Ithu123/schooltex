@@ -1,107 +1,105 @@
 %Skript Commands 
-    %Arbeitsblatt einbilden
-    
-    \newcommand{\declarePath}[1]{\providecommand{\Path}{#1}}
-    % Define a command that checks if the Path is set
-    \define@key{AB}{format}{\def\image@format{#1}}
+%Arbeitsblatt einbilden
+
+\newcommand{\declarePath}[1]{\providecommand{\Path}{#1}}
+% Define a command that checks if the Path is set
+\define@key{AB}{format}{\def\image@format{#1}}
 
 
-    \makeatletter
-    \NewDocumentCommand{\AB}{ O{} m }{%
-      \@ifundefined{Path}{%
-        \PackageError{schooltex}{Path not set. Please set the \string\Path macro.}{}%
+\makeatletter
+\NewDocumentCommand{\AB}{ O{} m }{%
+  \@ifundefined{Path}{%
+    \PackageError{schooltex}{Path not set. Please set the \string\Path macro.}{}%
+  }{%
+    \begingroup
+    \IfStrEq{#1}{small}{%
+      \includepdf[pages=-, nup=1x2, doublepages, landscape, frame]{\Path/#2/#2}%
+    }{%
+      \IfStrEq{#1}{smalllandscape}{%
+        \includepdf[pages=-, nup=1x2, doublepages, frame]{\Path/#2/#2}%
       }{%
-        \begingroup
-        \IfStrEq{#1}{small}{%
-          \includepdf[pages=-, nup=1x2, doublepages, landscape, frame]{\Path/#2/#2}%
-        }{%
-          \IfStrEq{#1}{smalllandscape}{%
-            \includepdf[pages=-, nup=1x2, doublepages, frame]{\Path/#2/#2}%
-          }{%
-            \includepdf[pages=-]{\Path/#2/#2}% Default case
-          }%
-        }%
-        \addcontentsline{toc}{subsection}{#2}%
-        \endgroup
+        \includepdf[pages=-]{\Path/#2/#2}% Default case
       }%
-    }
-    \makeatother
-    
+    }%
+    \addcontentsline{toc}{subsection}{#2}%
+    \endgroup
+  }%
+}
+\makeatother
 
     
 %Stundenverlauf
-    %Methoden
-    \newcommand{\lsg}{L-S G.}
-    \newcommand{\lv}{LV}
-    \newcommand{\ea}{EA}
-    \newcommand{\pa}{PA}
-    \newcommand{\ga}{GA}
-    \newcommand{\ze}{\\ \hline}
+%Methoden
+\ProvideTextCommandDefault{\lsg}{L-S G.}
+\ProvideTextCommandDefault{\lv}{LV}
+\ProvideTextCommandDefault{\ea}{EA}
+\ProvideTextCommandDefault{\pa}{PA}
+\ProvideTextCommandDefault{\ga}{GA}
+\ProvideTextCommandDefault{\ze}{\\ \hline}
 
 
-    \newcommand{\minimal}{\multicolumn{5}{|c|}{Minimales Stundenziel Stundenausstieg}                                                                                                                                                                                                                                                               \\ \hline}
-    \newcommand{\wunsch}{\multicolumn{5}{|c|}{Gewünschter Stundenausstieg}                                                                                                                                                                                                                                                               \\ \hline}
-    \newcommand{\pause}{\multicolumn{5}{|c|}{Pause}                                                                                                                                                                                                                                                               \\ \hline}
+\newcommand{\minimal}{\multicolumn{5}{|c|}{Minimales Stundenziel Stundenausstieg}                                                                                                                                                                                                                                                               \\ \hline}
+\newcommand{\wunsch}{\multicolumn{5}{|c|}{Gewünschter Stundenausstieg}                                                                                                                                                                                                                                                               \\ \hline}
+\newcommand{\pause}{\multicolumn{5}{|c|}{Pause}                                                                                                                                                                                                                                                               \\ \hline}
 
-    \newcommand{\defaultWidth}{12}
+\newcommand{\defaultWidth}{12}
 
-    \NewDocumentEnvironment{SVerlauf}{ O{12} g }
-    {% Begin code
-        \subsubsection{Stundenverlauf%
-            \IfValueT{#2}{\ #2}}
-        \begin{adjustbox}{width=\textwidth,center}
-            \tabular{|c|l|p{#1 cm}|l|l|}
-                \hline
-                \textbf{Zeit} & \textbf{Thema} &\textbf{Ausführung/Plan} &\textbf{Methode}  & \textbf{Medien}  \\
-                \hline
-    }
-    {% End code
-            \endtabular
-        \end{adjustbox}
-    }
-    
-    
+\NewDocumentEnvironment{SVerlauf}{ O{12} g }
+{% Begin code
+    \subsubsection{Stundenverlauf%
+        \IfValueT{#2}{\ #2}}
+    \begin{adjustbox}{width=\textwidth,center}
+        \tabular{|c|l|p{#1 cm}|l|l|}
+            \hline
+            \textbf{Zeit} & \textbf{Thema} &\textbf{Ausführung/Plan} &\textbf{Methode}  & \textbf{Medien}  \\
+            \hline
+}
+{% End code
+        \endtabular
+    \end{adjustbox}
+}
 
-    \newcommand{\umbruch}[1]{\begin{tabular}[c]{@{}l@{}} #1 \end{tabular}}
+
+
+\newcommand{\umbruch}[1]{\begin{tabular}[c]{@{}l@{}} #1 \end{tabular}}
 
 % Tafel
-    %Überscrift
-    \newenvironment{Ueber}[1]{
-    \begin{scshape}
+%Überscrift
+\newenvironment{Ueber}[1]{
+  \begin{scshape}
     \underline{#1}
-    }{
+  }{
     \end{scshape}\newline
-    }
+  }
 
-    \newcounter{kap} %Counter für das Kapitel
-    \newcounter{unterkap}[kap] %Counter für die Stunde (das Unterthema)
-    \newcounter{unterunterkap}[unterkap]
-
-
-    \newcommand\tafel[1]{\subsubsection{Tafelbild}
-    \vspace{1em}\fbox{\parbox{\textwidth}{#1}}\vspace{1em}}
-
-    % Tafelbildüberschriften
-    \newcommand\kap[1]{\stepcounter{kap} \begin{scshape}\underline{\thekap \hspace{0.7em} #1} \end{scshape}  \vspace{1em}\\}
-    \newcommand\uber[1]{\refstepcounter{unterkap}\underline{\thekap .\theunterkap \hspace{0.7em} #1}  \vspace{1em}  \\}
-    \newcommand\uuber[1]{\refstepcounter{unterunterkap}\underline{\thekap .\theunterkap .\theunterunterkap \hspace{0.7em} #1} \vspace{1em}\\}
-
-    % Ohne Nummer
-    \newcommand{\kapo}[1]{ \begin{scshape}\underline{#1} \end{scshape}  \vspace{1em}\\}
-    \newcommand{\ubero}[1]{\underline{#1}  \vspace{1em}  \\}
-    \newcommand{\uubero}[1]{\underline{#1} \vspace{1em}\\}
+\newcounter{kap} %Counter für das Kapitel
+\newcounter{unterkap}[kap] %Counter für die Stunde (das Unterthema)
+\newcounter{unterunterkap}[unterkap]
 
 
+\providecommand\tafel[1]{\subsubsection{Tafelbild}
+\vspace{1em}\fbox{\parbox{\textwidth}{#1}}\vspace{1em}}
+
+% Tafelbildüberschriften
+\providecommand\kap[1]{\stepcounter{kap} \begin{scshape}\underline{\thekap \hspace{0.7em} #1} \end{scshape}  \vspace{1em}\\}
+\providecommand\uber[1]{\refstepcounter{unterkap}\underline{\thekap .\theunterkap \hspace{0.7em} #1}  \vspace{1em}  \\}
+\providecommand\uuber[1]{\refstepcounter{unterunterkap}\underline{\thekap .\theunterkap .\theunterunterkap \hspace{0.7em} #1} \vspace{1em}\\}
+
+% Ohne Nummer
+\providecommand{\kapo}[1]{ \begin{scshape}\underline{#1} \end{scshape}  \vspace{1em}\\}
+\providecommand{\ubero}[1]{\underline{#1}  \vspace{1em}  \\}
+\providecommand{\uubero}[1]{\underline{#1} \vspace{1em}\\}
 
 
 
 
 
-    %\tafel{
-    %\kap{Ein Kapitel}
-    %\uber{Eine Themen-Überschrift}
-    %\uuber{Eine Unterüberschrift}
-    %  }
 
-    \newcommand{\mitte}{ \hfill\vrule\hfill\hspace{0.1em} }%FÜr die Mitte zwischen zwei Minipages
-    \newcommand{\neue}{\vspace{1em}\hrule \vspace{1em} }%FÜr die Mitte zwischen zwei Minipages
+%\tafel{
+%\kap{Ein Kapitel}
+%\uber{Eine Themen-Überschrift}
+%\uuber{Eine Unterüberschrift}
+%  }
+
+\newcommand{\mitte}{ \hfill\vrule\hfill\hspace{0.1em} }%FÜr die Mitte zwischen zwei Minipages
+\newcommand{\neue}{\vspace{1em}\hrule \vspace{1em} }%FÜr die Mitte zwischen zwei Minipages

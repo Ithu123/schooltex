@@ -106,15 +106,15 @@
     \def\rescale{1}
   \fi
   
-  \readlist\mylist{#2} % Read and store the elements of the list
+  \readlist\figruelist{#2} % Read and store the elements of the list
 
   % Calculate the width of each subfigure based on the number of elements and rescale factor
   \newlength{\subfigurewidth}
-  \setlength{\subfigurewidth}{\dimexpr(0.8\linewidth/\mylistlen)\relax}
+  \setlength{\subfigurewidth}{\dimexpr(0.8\linewidth/\figruelistlen)\relax}
 
   \begin{figure}[h!]
     \centering
-    \foreachitem\i\in\mylist{
+    \foreachitem\i\in\figruelist{
       \begin{subfigure}{\subfigurewidth} % Adjust the width dynamically
         \centering
         \includegraphics[width=\linewidth]{\i}

@@ -29,7 +29,7 @@
   \ifnum#1=0
     \setlength{\remainingheight}{\dimexpr\textheight-\pagetotal-\baselineskip}
   \else
-    \setlength{\remainingheight}{#1}
+    \setlength{\remainingheight}{\dimexpr #1 cm}
   \fi
   \begin{tikzpicture}
     \rounddowncm{\textwidth}

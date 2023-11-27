@@ -56,25 +56,57 @@
     \fi
 }
 
+
+\newlength\GesamtP	% Die Gesamtpunktzahl
+\newlength\AufgP 	% Die Punkte innerhalb einer Aufgabe
+\xdef\Punkte{0}		% Dass es bei der ersten Aufgabe nicht heißt, das gibt es nicht
+\newlength\ZwischenP
+
+\newlength{\pointspace}     % Space before the points
+\setlength{\pointspace}{0.8cm}
+\marginparsep8mm
+
 \newcounter{AufgabeCounter}
 \newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercises
 
-\newenvironment{Aufgabe}[1][1]{%
-    \setkeys{AufgabeKeys}{symbol=#1}% Set the symbol based on the argument
+\NewDocumentEnvironment{Aufgabe}{O{0} O{0}}{%
+    \setkeys{AufgabeKeys}{symbol=#2}% Set the symbol based on the argument
+    \setlength{\GesamtP}{\Punkte pt} %Gesamtpunkte aufrufen
+    \setlength{\pointspace}{0cm} % restor from teilaufgabe
 
     % Here begins the actual exercise
     \refstepcounter{AufgabeCounter}
-    \paragraph{\margin_symbol\Aufg \theAufgabeCounter} \setcounter{TA}{1}%
-    \label{aufgabe:\theAufgabeCounter}
-}{}
+    \paragraph{\Aufg\, \theAufgabe} \setlength{\AufgP}{#1 pt}  \setcounter{TA}{1} \refstepcounter{Aufgabe}  
+}{%
+\ifdim\AufgP=0pt
+    \relax
+\else
+    \vspace{\pointspace}  \marginpar{\vspace{-4mm}\rule{0.8cm}{0.5pt}/\strip@pt\AufgP} 
+% Punktzahlrechner am Ende
+    \addtolength{\GesamtP}{\AufgP}						% Die neue Gesamtpunktzahl angeben
+    \setlength{\AufgP}{0pt}								% Aufgabenpunkte für die nächste Aufgabe zurücksetzen
+    \xdef\Punkte{\strip@pt\GesamtP} 					% Gesamtpunkte Global Speichern, xdef expandiert das Makro
+\fi
 
-\newcommand{\teilaufgabe}[1]{%
+    }
+
+
+
+
+
+\ProvideDocumentCommand{\teilaufgabe}{ O{0} m}{%
+    \setlength{\pointspace}{0.8cm}
     \setlength{\parskip}{0.3em}
     \begin{addmargin}[1em]{0em}
-        \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#1}
+        \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#2}
     \end{addmargin}
-}
-
+    \ifnum#1 = 0
+    \relax
+    \else
+    \marginpar{\vspace{-4mm}(#1 P.)} % Punktanzahl für die Teilaufgabe am Rand
+    \addtolength{\AufgP}{#1 pt}	% Am Ende wird auf die Punktzahl die Punktzahl der Teilaufgabe dazugezählt
+    \fi
+    }
 % Solution environment
 \newenvironment{Loesung}{%
     \paragraph{Lösung Aufgabe \ref{aufgabe:\theSolutionCounter}}

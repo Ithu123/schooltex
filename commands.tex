@@ -45,9 +45,10 @@
 \newcommand{\gettextheight}{\the\textheight}
 \newcommand{\getbaselineskip}{\the\baselineskip}
 % new try grid command
-\ProvideDocumentCommand{\newgrid}{O{}}{
+\ProvideDocumentCommand{\newgrid}{O{0}}{
 \par
 \vspace{\baselineskip}
+
 \pgfmathsetmacro{\theight}{scalar(\gettextheight)}
 \pgfmathsetmacro{\pat}{scalar(\getpagetotal)}
 \pgfmathsetmacro{\bsskip}{scalar(\getbaselineskip)}
@@ -55,8 +56,11 @@
 \dimendef\gridwidth=0
 \pgfmathsetlength{\gridwidth}{1 cm * floor(scalar(\textwidth)*0.0352778) }
 
+\ifnum#1=0
 \pgfmathsetmacro{\gridheight}{1 cm * floor((\theight-\pat-2*\bsskip)*0.0352778) }
-
+\else
+\pgfmathsetmacro{\gridheight}{1 cm *#1 }
+\fi
 \begin{tikzpicture}
   \tikz
   \coordinate (A) at (canvas cs:x=\gridwidth,y=\gridheight) {};

@@ -18,7 +18,7 @@
 %grid command
 \ProvideDocumentCommand{\grid}{O{0}}{
 \par
-\vspace{\baselineskip}
+
 
 \pgfmathsetmacro{\theight}{scalar(\gettextheight)}
 \pgfmathsetmacro{\pat}{scalar(\getpagetotal)}
@@ -28,15 +28,17 @@
 \pgfmathsetlength{\gridwidth}{1 cm * floor(scalar(\textwidth)*0.0352778) }
 
 \ifnum#1=0
-  \pgfmathsetmacro{\gridheight}{1 cm * floor((\theight-\pat-2*\bsskip)*0.0352778) }
+  \pgfmathsetmacro{\gridheight}{1 cm * floor((\theight-\pat-\bsskip)*0.0352778) }
 \else
   \pgfmathsetmacro{\gridheight}{1 cm *#1 }
 \fi
+\begin{center}
 \begin{tikzpicture}
   \tikz
   \coordinate (A) at (canvas cs:x=\gridwidth,y=\gridheight) {};
   \draw[step=0.5cm, color=gray] (0cm ,0 cm ) grid (canvas cs:x=\gridwidth,y=\gridheight);
 \end{tikzpicture}%
+\end{center}
 \par
 }
 
@@ -167,5 +169,11 @@
     \mylabel % Use the provided label or the default label for the figure label
   \end{figure}
 }
-
 \makeatother
+
+
+\providecommand{\R}{\mathbb{R}}
+\providecommand{\N}{\mathbb{N}}
+\providecommand{\Z}{\mathbb{Z}}
+\providecommand{\Q}{\mathbb{Q}}
+\providecommand{\C}{\mathbb{C}}

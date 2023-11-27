@@ -11,12 +11,11 @@
 
 % \newcommand{\mitte}{ \hfill\vrule\hfill\hspace{0.1em} }%FÜr die Mitte zwischen zwei Minipages
 
-% A 0.5cm grid at given thingy
-% Define a command for rounding down to the nearest lower multiple of 0.5
+% A 0.5cm grid at given text
 \newcommand{\getpagetotal}{\the\pagetotal}
 \newcommand{\gettextheight}{\the\textheight}
 \newcommand{\getbaselineskip}{\the\baselineskip}
-% new try grid command
+%grid command
 \ProvideDocumentCommand{\grid}{O{0}}{
 \par
 \vspace{\baselineskip}
@@ -29,9 +28,9 @@
 \pgfmathsetlength{\gridwidth}{1 cm * floor(scalar(\textwidth)*0.0352778) }
 
 \ifnum#1=0
-\pgfmathsetmacro{\gridheight}{1 cm * floor((\theight-\pat-2*\bsskip)*0.0352778) }
+  \pgfmathsetmacro{\gridheight}{1 cm * floor((\theight-\pat-2*\bsskip)*0.0352778) }
 \else
-\pgfmathsetmacro{\gridheight}{1 cm *#1 }
+  \pgfmathsetmacro{\gridheight}{1 cm *#1 }
 \fi
 \begin{tikzpicture}
   \tikz
@@ -39,13 +38,11 @@
   \draw[step=0.5cm, color=gray] (0cm ,0 cm ) grid (canvas cs:x=\gridwidth,y=\gridheight);
 \end{tikzpicture}%
 \par
-
 }
 
 
 
 % New image command
-
 \makeatletter
 \newcounter{imagesourcecounter}
 \setcounter{imagesourcecounter}{1}

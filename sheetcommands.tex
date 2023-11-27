@@ -68,7 +68,6 @@
 
 \newcounter{AufgabeCounter}
 \newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercises
-
 \ProvideDocumentEnvironment{Aufgabe}{O{0} O{0}}{%
     \setkeys{AufgabeKeys}{symbol=#2}% Set the symbol based on the argument
     \setlength{\GesamtP}{\Punkte pt} %Gesamtpunkte aufrufen
@@ -77,17 +76,17 @@
     % Here begins the actual exercise
     \refstepcounter{AufgabeCounter}
     \paragraph{\Aufg\, \theAufgabe} \setlength{\AufgP}{#1 pt}  \setcounter{TA}{1} \refstepcounter{Aufgabe}  
-}{%
+    }{
 \ifdim\AufgP=0pt
     \relax
 \else
-    \vspace{\pointspace}  \marginpar{\vspace{-4mm}\rule{0.8cm}{0.5pt}/\strip@pt\AufgP} 
+\nopagebreak
+    \vspace{\pointspace} \marginpar{\vspace{-4mm}\rule{0.8cm}{0.5pt}/\strip@pt\AufgP} 
 % Punktzahlrechner am Ende
     \addtolength{\GesamtP}{\AufgP}						% Die neue Gesamtpunktzahl angeben
     \setlength{\AufgP}{0pt}								% Aufgabenpunkte für die nächste Aufgabe zurücksetzen
     \xdef\Punkte{\strip@pt\GesamtP} 					% Gesamtpunkte Global Speichern, xdef expandiert das Makro
 \fi
-
     }
 
 
@@ -115,6 +114,29 @@
 }{}
 \makeatother
 
+%%% Ende der Klassenarbeit wird definiert
+
+\makeatletter
+\newcommand{\Ende}{\vspace{3em}\begin{center} \textbf{Viel Erfolg!} \end{center} \textbf{Erreichte Gesamtpunktzahl:}\rule{1.5cm}{0.5pt}/\Punkte   \newline \newline \newline
+\textbf{Note:}\rule{1.5cm}{0.5pt} \hfill \textbf{In Worten:} \rule{5cm}{0.5pt}\\
+\vspace{1cm}
+\makeatother
+
+\begin{tabularx}{\textwidth}{l X l}
+ \hspace{3cm}   & & \hspace{3cm} \\\cline{1-1}\cline{3-3}
+ Ort, Datum     & & Unterschrift
+\end{tabularx} } % Das Ende der KA
+
+
+%%% Header
+\newcommand{\header}[2]{
+%\vspace{-1em}
+\textbf{Bearbeitungszeit:} #1$\,\mathrm{min}$\hfill \Datum \\
+
+\textbf{Zugelassene Hilfsmittel:} #2\\
+\\
+\textbf{Schreibe unter jede Textaufgabe einen Antwortsatz.}
+\hrule}
 
 
 

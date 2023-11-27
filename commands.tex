@@ -39,7 +39,6 @@
   \draw[step=0.5cm, color=gray] (0cm ,0 cm ) grid (canvas cs:x=\gridwidth,y=\gridheight);
 \end{tikzpicture}%
 \end{center}
-\par
 }
 
 
@@ -142,17 +141,21 @@
 \define@key{multiimage}{label}{\def\multiimage@label{#1}} % Define a key for the label
 \define@key{multiimage}{rescale}{\def\rescale{#1}} % Define a key for the rescale each image
 \define@key{multiimage}{source}{\def\multiimage@source{#1}}
+\define@key{multiimage}{widtheach}{\def\multiimage@widtheach{#1}}
 
 \providecommand{\multiimage}[2][]{ % Optional arguments are provided as a key-value list
-  \setkeys{multiimage}{caption=, label=, rescale = 1.0, source = , #1} % Set default values and apply user-provided values
+  \setkeys{multiimage}{caption=, label=, rescale = 1.0, source = ,widtheach = , #1} % Set default values and apply user-provided values
   \handleImageCaption{\multiimage@source}{\multiimage@caption}
   \handlelabel{\multiimage@label}
   \readlist\figruelist{#2} % Read and store the elements of the list
   
   % Calculate the width of each subfigure based on the number of elements and rescale factor
   
+\ifdefempty{\multiimage@widtheach}{
   \setlength{\subfigurewidth}{0.8\dimexpr(\rescale\linewidth/\figruelistlen)\relax}
-  
+  }{
+  \setlength{\subfigurewidth}{\multiimage@widtheach}
+  }
 
 
   \begin{figure}[h!]

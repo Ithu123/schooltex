@@ -16,7 +16,8 @@
 \ofoot{\fach}
 \cfoot{test}
 
-\uselengthunit{cm}
+%\uselengthunit{cm}
+\newcommand{\Datum}{xx.xx.23}
 \begin{document}
 \begin{SVerlauf}{Thema}
 10' & Einstieg & Das wäre der Einstieg & & \ze
@@ -33,6 +34,7 @@
     }
 
 \newpage
+\header{90}{Schreibzeug}
 \begin{Aufgabe}[3]TEs
     \teilaufgabe[1]{testen}
 \end{Aufgabe}
@@ -41,10 +43,13 @@
 \end{Aufgabe}
 \begin{Aufgabe}[24]
     \blindtext
-    \grid
-\end{Aufgabe}
 
-%\image[source = www.example.de]{Atwood2}
+\end{Aufgabe}
+\grid
+\blindtext
+\multiimage[widtheach = 5cm]{example-image-a,example-image-a}
+ 
+ %\image[source = www.example.de]{Atwood2}
 %\image[width = 6cm, caption = Eine Abbildung mit Caption und Quelle, source = www.example.de]{Atwood2}
 %\image[width = 6cm]{Atwood2}
 %\image[caption = Ohne Quelle{,} aber mit Caption]{Atwood2}

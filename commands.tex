@@ -131,16 +131,14 @@
 }
 \makeatother
 
+
+
+
 \makeatletter
 \newcounter{captioncounter}
 \setcounter{captioncounter}{1}
-\newcommand{\handlesubcaptions}[1]{%
+\providecommand{\handlesubcaptions}[1]{%
     \readlist\captionlist{#1}
-    \foreachitem\i\in\captionlist{
-        \expandafter\providecommand\csname scaption\romannumeral\the\value{captioncounter}\endcsname {\i}
-        \stepcounter{captioncounter}
-         }
-    \setcounter{captioncounter}{1}
 }
 \makeatother
 
@@ -154,26 +152,29 @@
 \define@key{multiimage}{source}{\def\multiimage@source{#1}}
 \define@key{multiimage}{widtheach}{\def\multiimage@widtheach{#1}}
 
+
+
 \ProvideDocumentCommand{\multiimage}{O{} m}{ % Optional arguments are provided as a key-value list
   \setkeys{multiimage}{caption=, label=, rescale = 1.0, source = ,widtheach = ,subcaptions = , #1} % Set default values and apply user-provided values
+  
+  %Look for captions
   \handleImageCaption{\multiimage@source}{\multiimage@caption}
-
   \handlelabel{\multiimage@label}
   \readlist\figruelist{#2} % Read and store the elements of the list
 
-  \ifdefempty{\multiimage@subcaptions}{
+
+  % Look for subcaptions
+  \ifdefempty{\multiimage@subcaptions}{ 
     \relax
   }{  
-    \handlesubcaptions{{a,b,c}}
+    \readlist\captionlist{\multiimage@subcaptions}
     }
   % Calculate the width of each subfigure based on the number of elements and rescale factor
-  
 \ifdefempty{\multiimage@widtheach}{
   \setlength{\subfigurewidth}{0.8\dimexpr(\rescale\linewidth/\figruelistlen)\relax}
   }{
   \setlength{\subfigurewidth}{\multiimage@widtheach}
   }
-
 
   \begin{figure}[h!]
     \centering
@@ -181,7 +182,15 @@
       \begin{subfigure}{\subfigurewidth} % Adjust the width dynamically
         \centering
         \includegraphics[width=\linewidth]{\i}
-        \csname scaption\romannumeral\the\value{captioncounter}\endcsname
+        \ifdefempty{\multiimage@subcaptions}{
+          \ifx{\multiimage@subcaptions}{nosubcaptions} % Options subcaptions =nosubcaptions
+          \relax 
+          \else
+          \caption{ } %Standard
+          \fi
+        }{  
+          \expandafter\caption{\captionlist[\icnt]} %if there are subcaptions
+          }
         \stepcounter{captioncounter}
       \end{subfigure}%
     }

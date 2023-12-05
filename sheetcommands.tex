@@ -114,6 +114,14 @@
 }{}
 \makeatother
 
+
+\makeatletter
+\newcommand{\solution}[1]{\expandafter\def\csname value@\theAufgabe \endcsname{#2}}
+\newcommand{\printsol}[1]{\csname value@#1\endcsname}
+\makeatother
+
+
+
 %%% Ende der Klassenarbeit wird definiert
 
 \makeatletter

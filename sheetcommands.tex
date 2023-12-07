@@ -128,7 +128,7 @@
     \foreach \i in {1,2,...,\value{Aufgabe}} {
         \@ifundefined{storedsolution\romannumeral\i}{
             % Solution is undefined, do nothing
-        }{
+        }{  \paragraph{Lösung zu Aufgabe \, \i:}
             \csname storedsolution\romannumeral\i\endcsname
         }
     }

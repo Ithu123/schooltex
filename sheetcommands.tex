@@ -107,17 +107,32 @@
     \fi
     }
 % Solution environment
-\newenvironment{Loesung}{%
-    \paragraph{Lösung Aufgabe \ref{aufgabe:\theSolutionCounter}}
-    \refstepcounter{SolutionCounter}
-    \label{loesung:\theSolutionCounter}
-}{}
-\makeatother
 
 
+% Solutions
+\newcommand{\solution}[1]{\expandafter\gdef\csname storedsolution\romannumeral\value{Aufgabe}\endcsname{#1} \setcounter{TA}{1}}
+\newcommand{\printsol}[1]{\paragraph{Lösung Aufgabe \, #1} \csname storedsolution\romannumeral #1\endcsname}
+
+\ProvideDocumentCommand{\solutionpart}{m}{%
+    \setlength{\parskip}{0.3em}
+    \begin{addmargin}[1em]{0em}
+        \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#1}
+    \end{addmargin}
+    }
+
+
+
+% Give me all the solutions
 \makeatletter
-\newcommand{\solution}[1]{\expandafter\def\csname value@\theAufgabe \endcsname{#2}}
-\newcommand{\printsol}[1]{\csname value@#1\endcsname}
+\ProvideDocumentCommand{\printsols}{}{ 
+    \foreach \i in {1,2,...,\value{Aufgabe}} {
+        \@ifundefined{storedsolution\romannumeral\i}{
+            % Solution is undefined, do nothing
+        }{
+            \csname storedsolution\romannumeral\i\endcsname
+        }
+    }
+}
 \makeatother
 
 

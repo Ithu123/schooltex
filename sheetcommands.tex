@@ -106,6 +106,70 @@
     \addtolength{\AufgP}{#1 pt}	% Am Ende wird auf die Punktzahl die Punktzahl der Teilaufgabe dazugezählt
     \fi
     }
+
+
+% Material Command: This command should take a nbumber of materials for the excersize, manily tables and pictures 
+\newlength{\materialwidth}
+\makeatletter
+\define@key{materials}{caption}{\def\materials@caption{#1}} % Define a key for the caption
+\define@key{materials}{subcaptions}{\def\materials@subcaptions{#1}} % Define a key for the caption
+\define@key{materials}{label}{\def\materials@label{#1}} % Define a key for the label
+\define@key{materials}{rescale}{\def\rescale{#1}} % Define a key for the rescale each image
+\define@key{materials}{source}{\def\materials@source{#1}}
+\define@key{materials}{widtheach}{\def\materials@widtheach{#1}}
+
+
+
+\ProvideDocumentCommand{\materials}{O{} m}{ % Optional arguments are provided as a key-value list
+  \setkeys{materials}{caption=, label=, rescale = 1.0, source = ,widtheach = ,subcaptions = , #1} % Set default values and apply user-provided values
+  
+  %Look for captions
+  \handleImageCaption{\materials@source}{\materials@caption}
+  \handlelabel{\materials@label}
+  \readlist\figruelist{#2} % Read and store the elements of the list
+
+
+  % Look for subcaptions
+  \ifdefempty{\materials@subcaptions}{ 
+    \relax
+  }{  
+    \readlist\captionlist{\materials@subcaptions}
+    }
+  % Calculate the width of each subfigure based on the number of elements and rescale factor
+\ifdefempty{\materials@widtheach}{
+  \setlength{\materialwidth}{0.8\dimexpr(\rescale\linewidth/\figruelistlen)\relax}
+  }{
+  \setlength{\materialwidth}{\materials@widtheach}
+  }
+
+  \begin{figure}[h!]
+    \centering
+    \foreachitem\i\in\figruelist{
+      \begin{subfigure}{\materialwidth} % Adjust the width dynamically
+        \centering
+        \includegraphics[width=\linewidth]{\i}
+        \ifdefempty{\materials@subcaptions}{
+          \ifx{\materials@subcaptions}{nosubcaptions} % Options subcaptions =nosubcaptions
+          \relax 
+          \else
+          \caption{ } %Standard
+          \fi
+        }{  
+          \expandafter\caption{\captionlist[\icnt]} %if there are subcaptions
+          }
+        \stepcounter{captioncounter}
+      \end{subfigure}%
+    }
+    \setcounter{captioncounter}{1}
+    \imagecaption 
+    \mylabel % Use the provided label or the default label for the figure label
+  \end{figure}
+}
+\makeatother
+
+
+
+
 % Solution environment
 
 

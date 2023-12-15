@@ -141,24 +141,11 @@
   }{
   \setlength{\materialwidth}{\materials@widtheach}
   }
-
   \begin{figure}[h!]
     \centering
     \foreachitem\i\in\figruelist{
-      \begin{subfigure}{\materialwidth} % Adjust the width dynamically
-        \centering
-        \includegraphics[width=\linewidth]{\i}
-        \ifdefempty{\materials@subcaptions}{
-          \ifx{\materials@subcaptions}{nosubcaptions} % Options subcaptions =nosubcaptions
-          \relax 
-          \else
-          \caption{ } %Standard
-          \fi
-        }{  
-          \expandafter\caption{\captionlist[\icnt]} %if there are subcaptions
-          }
+        \subcaptionbox{\captionlist[\icnt]}[\materialwidth]{\includegraphics[width = \materialwidth]{\i}}
         \stepcounter{captioncounter}
-      \end{subfigure}%
     }
     \setcounter{captioncounter}{1}
     \imagecaption 

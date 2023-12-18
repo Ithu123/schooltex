@@ -14,72 +14,55 @@
 
 \ifoot{Baier}
 \ofoot{\fach}
-\cfoot{test}
+\cfoot{}
 
 %\uselengthunit{cm}
 \newcommand{\Datum}{xx.xx.23}
 \begin{document}
-\begin{SVerlauf}{Thema}
-10' & Einstieg & Das wäre der Einstieg & & \ze
-\end{SVerlauf}
 
 
-\begin{SVerlauf}{Thema}
-    10' & Einstieg & Das wäre der Einstieg & & \ze
-\end{SVerlauf}
+% \begin{SVerlauf}
+%     10' & Ein Beispiel & Dies ist ein Beispiel & \lsg & Tafel \\ 
+%     10' & Ein zweites Beispiel & Dies ist ein zweites  Beispiel Dies ist ein zweites  Beispiel Dies ist ein zweites  Beispiel Dies ist ein zweites  Beispiel  & \lsg & Tafel \\ 
+%     10' & Ein zweites Beispiel & Dies ist ein zweites  Beispiel & \lsg & Tafel  \\ 
+%     10' & Ein zweites Beispiel & Dies ist ein zweites  Beispiel & \lsg & Tafel \\ 
+% \end{SVerlauf}
+\begin{plan}
+10' & Ein Beispiel & Dies ist ein Beispiel & \lsg & Tafel \\ 
+10' & Ich teste das: &Wenn ich hier jetzt einen rießigen Text hineinschreibe, der im prinzip die gesamte
+Information über die Stunde enthält, wird das dann etwas?  & \lsg & Tafel, Dokumentenkamera \\ 
+10' & Ein zweites Beispiel & Dies ist ein zweites  Beispiel & \lsg & Tafel  \\ 
+10' & Ein zweites Beispiel & Dies ist ein zweites  Beispiel & \lsg & Tafel \\ 
+\end{plan}
 
-    \tafel{\kap{Ein Kapitel}
-        \uber{Ueberschrift}
-    Das ist ein Tafelbild.
-    }
 
-\newpage
-\header{90}{Schreibzeug}
-\begin{Aufgabe}[3]TEs
-    \teilaufgabe[1]{testen}
-\end{Aufgabe}
-\begin{Aufgabe}[3]TEs
-    \teilaufgabe[1]{testen}
-\end{Aufgabe}
-\begin{Aufgabe}[24]
-    \blindtext
-    \grid
-\end{Aufgabe}
+
+
+
 
 \begin{Aufgabe}
     \blindtext
 \end{Aufgabe}
-\blindtext
-\multiimage[widtheach = 5cm]{example-image-a,example-image-a}
-\multiimage[widtheach = 5cm, subcaptions = {erste1 , zweite1, drittenicht}]{example-image-a,example-image-a, example-image-c}
-\multiimage[widtheach = 5cm, subcaptions = {erste , zweite, dritte}]{example-image-a,example-image-a}
 
 
-\begin{figure}
-    \includegraphics{example-image-a}
-   
-\end{figure}
+\begin{Aufgabe}
+    \blindtext
+\end{Aufgabe}
+\begin{Aufgabe}
+Aufgabe mit einer Lösung. 
+\solution{Das sollte jetzt die Lösung zu der Aufgabe sein.}
+\end{Aufgabe}
 
 
+\begin{Aufgabe}
+    \blindtext
 
+\end{Aufgabe}
+\begin{Aufgabe}
+    \blindtext
+\end{Aufgabe}
 
-
-
- %\image[source = www.example.de]{Atwood2}
-%\image[width = 6cm, caption = Eine Abbildung mit Caption und Quelle, source = www.example.de]{Atwood2}
-%\image[width = 6cm]{Atwood2}
-%\image[caption = Ohne Quelle{,} aber mit Caption]{Atwood2}
-%\multiimage[source = www.expamle.com]{Atwood2,Atwood2, Atwood2, Atwood2, Atwood2}
-%\multiimage[caption = Diesmal auch mit Caption , source = www.expamle.com]{Atwood2,Atwood2, Atwood2, Atwood2, Atwood2}
-%\multiimage[caption = Mit caption]{Atwood2,Atwood2, Atwood2, Atwood2, Atwood2}
-%blindtext
-%\image[width = 10cm, source = examplequelle, position = l, label = fig:Label]{example-image-a}
-%\blindtext
-%In Abbildung \ref{fig:Label} sehen wir, dass wir hier ein Label definiert haben. Ich hoffe es klappt.
-%\AB[]{UebungEnergieundLeistung}
-%\AB[small]{UebungEnergieundLeistung}
-%\AB[smalllandscape]{UebungEnergieundLeistung}
-%\newpage
+\printsols
 
 
 \end{document}

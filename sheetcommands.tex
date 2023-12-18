@@ -106,12 +106,35 @@
     \fi
     }
 % Solution environment
-\newenvironment{Loesung}{%
-    \paragraph{Lösung Aufgabe \ref{aufgabe:\theSolutionCounter}}
-    \refstepcounter{SolutionCounter}
-    \label{loesung:\theSolutionCounter}
-}{}
+
+
+% Solutions
+\newcommand{\solution}[1]{\expandafter\gdef\csname storedsolution\romannumeral\value{Aufgabe}\endcsname{#1} \setcounter{TA}{1}}
+\newcommand{\printsol}[1]{\paragraph{Lösung Aufgabe \, #1} \csname storedsolution\romannumeral #1\endcsname}
+
+\ProvideDocumentCommand{\solutionpart}{m}{%
+    \setlength{\parskip}{0.3em}
+    \begin{addmargin}[1em]{0em}
+        \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#1}
+    \end{addmargin}
+    }
+
+
+
+% Give me all the solutions
+\makeatletter
+\ProvideDocumentCommand{\printsols}{}{ 
+    \foreach \i in {1,2,...,\value{Aufgabe}} {
+        \@ifundefined{storedsolution\romannumeral\i}{
+            % Solution is undefined, do nothing
+        }{  \paragraph{Lösung zu Aufgabe \, \i:}
+            \csname storedsolution\romannumeral\i\endcsname
+        }
+    }
+}
 \makeatother
+
+
 
 %%% Ende der Klassenarbeit wird definiert
 
@@ -121,10 +144,11 @@
 \vspace{1cm}
 \makeatother
 
-\begin{tabularx}{\textwidth}{l X l}
+\noindent
+\begin{tblr}{l X l}
  \hspace{3cm}   & & \hspace{3cm} \\\cline{1-1}\cline{3-3}
  Ort, Datum     & & Unterschrift
-\end{tabularx} } % Das Ende der KA
+\end{tblr} } % Das Ende der KA
 
 
 %%% Header

@@ -185,13 +185,14 @@ class plotfig(object):
             ax.yaxis.get_major_ticks()[yticks.index(ymax)].label1.set_visible(False)
 
         # Annotate x and y
-        frac = 0.07
+        frac = 0.09
         dx = np.min([np.abs(xmin-xmax)*frac,np.abs(ymin-ymax)*frac])
         dy = float(dx)*float(self.get_aspect(ax))
                
-        ax.annotate('$x$', xy=(1,0), xytext=(xmax, -dy), transform=ax.transAxes, ha='center', va='center',fontsize=12)
-        ax.annotate('$y$', xy=(0,1), xytext=(-dx, ymax), transform=ax.transAxes, ha='center', va='center',fontsize=12)
-   
+        ax.annotate('$x$', xy=(1, 0), xytext=(xmax, -dx), transform=ax.transAxes, ha='center', va='center', fontsize=12,
+            bbox=dict(boxstyle='round', facecolor='white', edgecolor='white', pad=0))
+        ax.annotate('$y$', xy=(0, 1), xytext=(-dy, ymax), transform=ax.transAxes, ha='center', va='center', fontsize=12,
+            bbox=dict(boxstyle='round', facecolor='white', edgecolor='white', pad=0))   
     def get_aspect(self,ax=None):
         aspect = ax.get_aspect()
         if isinstance(aspect,str):

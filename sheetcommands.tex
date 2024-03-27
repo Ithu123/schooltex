@@ -106,6 +106,57 @@
     \addtolength{\AufgP}{#1 pt}	% Am Ende wird auf die Punktzahl die Punktzahl der Teilaufgabe dazugezählt
     \fi
     }
+
+
+% Material Command: This command should take a nbumber of materials for the excersize, manily tables and pictures 
+\newlength{\materialwidth}
+\makeatletter
+\define@key{materials}{caption}{\def\materials@caption{#1}} % Define a key for the caption
+\define@key{materials}{subcaptions}{\def\materials@subcaptions{#1}} % Define a key for the caption
+\define@key{materials}{label}{\def\materials@label{#1}} % Define a key for the label
+\define@key{materials}{rescale}{\def\rescale{#1}} % Define a key for the rescale each image
+\define@key{materials}{source}{\def\materials@source{#1}}
+\define@key{materials}{widtheach}{\def\materials@widtheach{#1}}
+
+
+
+\ProvideDocumentCommand{\materials}{O{} m}{ % Optional arguments are provided as a key-value list
+  \setkeys{materials}{caption=, label=, rescale = 1.0, source = ,widtheach = ,subcaptions = , #1} % Set default values and apply user-provided values
+  
+  %Look for captions
+  \handleImageCaption{\materials@source}{\materials@caption}
+  \handlelabel{\materials@label}
+  \readlist\figruelist{#2} % Read and store the elements of the list
+
+
+  % Look for subcaptions
+  \ifdefempty{\materials@subcaptions}{ 
+    \relax
+  }{  
+    \readlist\captionlist{\materials@subcaptions}
+    }
+  % Calculate the width of each subfigure based on the number of elements and rescale factor
+\ifdefempty{\materials@widtheach}{
+  \setlength{\materialwidth}{0.8\dimexpr(\rescale\linewidth/\figruelistlen)\relax}
+  }{
+  \setlength{\materialwidth}{\materials@widtheach}
+  }
+  \begin{figure}[h!]
+    \centering
+    \foreachitem\i\in\figruelist{
+        \subcaptionbox{\captionlist[\icnt]}[\materialwidth]{\includegraphics[width = \materialwidth]{\i}}
+        \stepcounter{captioncounter}
+    }
+    \setcounter{captioncounter}{1}
+    \imagecaption 
+    \mylabel % Use the provided label or the default label for the figure label
+  \end{figure}
+}
+\makeatother
+
+
+
+
 % Solution environment
 
 
@@ -113,23 +164,75 @@
 \newcommand{\solution}[1]{\expandafter\gdef\csname storedsolution\romannumeral\value{Aufgabe}\endcsname{#1} \setcounter{TA}{1}}
 \newcommand{\printsol}[1]{\paragraph{Lösung Aufgabe \, #1} \csname storedsolution\romannumeral #1\endcsname}
 
-\ProvideDocumentCommand{\solutionpart}{m}{%
-    \setlength{\parskip}{0.3em}
-    \begin{addmargin}[1em]{0em}
-        \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#1}
-    \end{addmargin}
-    }
+% \ProvideDocumentCommand{\solutionpart}{m}{%
+%     \setlength{\parskip}{0.3em}
+%     \begin{addmargin}[1em]{0em}
+%         \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#1}
+%     \end{addmargin}
+%     }
 
 
 
 % Give me all the solutions
+% Ab hier steht die funktionierende Lösung bevor Chat darin herumgepfuscht hat
+% \makeatletter
+% \ProvideDocumentCommand{\printsols}{}{ 
+%     \foreach \i in {1,2,...,\value{Aufgabe}} {
+%         \@ifundefined{storedsolution\romannumeral\i}{
+%             % Solution is undefined, do nothing
+%         }{  \paragraph{Lösung zu Aufgabe \, \i:}
+%             \csname storedsolution\romannumeral\i\endcsname
+%         }
+%     }
+% }
+% \makeatother
+
+
+
 \makeatletter
-\ProvideDocumentCommand{\printsols}{}{ 
-    \foreach \i in {1,2,...,\value{Aufgabe}} {
-        \@ifundefined{storedsolution\romannumeral\i}{
-            % Solution is undefined, do nothing
-        }{  \paragraph{Lösung zu Aufgabe \, \i:}
-            \csname storedsolution\romannumeral\i\endcsname
+\ProvideDocumentCommand{\printsols}{o}
+{ 
+    \IfNoValueTF{#1}
+    {
+        % If no argument is provided, print all solutions
+        \foreach \i in {1,2,...,\value{Aufgabe}} {
+            \@ifundefined{storedsolution\romannumeral\i}{
+                % Solution is undefined, do nothing
+            }{  
+                \paragraph{Lösung zu Aufgabe \i:}
+                \csname storedsolution\romannumeral\i\endcsname
+            }
+        }
+    }
+    {
+        % Check if the argument is "last"
+        \ifstrequal{#1}{last}{
+            % Print the last solution
+            \edef\lastsolution{\number\numexpr\value{Aufgabe}\relax}
+            \@ifundefined{storedsolution\romannumeral\lastsolution}{
+                % Solution is undefined, provide a message
+                \paragraph{Lösung zur letzten Aufgabe:}
+                Solution not found.
+            }{  
+                \paragraph{Lösung zu Aufgabe \lastsolution:}
+                \csname storedsolution\romannumeral\lastsolution\endcsname
+            }
+        }{
+            % Check if the argument is a number
+            \ifnum\pdfstrcmp{#1}{\number\numexpr#1}=0
+                % If it's a number, print the solution for that number
+                \@ifundefined{storedsolution\romannumeral#1}{
+                    % Solution is undefined, provide a message
+                    \paragraph{Lösung zu Aufgabe #1:}
+                    Solution not found.
+                }{  
+                    \paragraph{Lösung zu Aufgabe #1:}
+                    \csname storedsolution\romannumeral#1\endcsname
+                }
+            \else
+                % If it's not "last" or a number, print an error message
+                \paragraph{Error:} Invalid argument.
+            \fi
         }
     }
 }

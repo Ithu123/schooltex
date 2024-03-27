@@ -164,27 +164,57 @@
 \newcommand{\solution}[1]{\expandafter\gdef\csname storedsolution\romannumeral\value{Aufgabe}\endcsname{#1} \setcounter{TA}{1}}
 \newcommand{\printsol}[1]{\paragraph{Lösung Aufgabe \, #1} \csname storedsolution\romannumeral #1\endcsname}
 
-\ProvideDocumentCommand{\solutionpart}{m}{%
-    \setlength{\parskip}{0.3em}
-    \begin{addmargin}[1em]{0em}
-        \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#1}
-    \end{addmargin}
-    }
+% \ProvideDocumentCommand{\solutionpart}{m}{%
+%     \setlength{\parskip}{0.3em}
+%     \begin{addmargin}[1em]{0em}
+%         \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#1}
+%     \end{addmargin}
+%     }
 
 
 
 % Give me all the solutions
+% Ab hier steht die funktionierende Lösung bevor Chat darin herumgepfuscht hat
+% \makeatletter
+% \ProvideDocumentCommand{\printsols}{}{ 
+%     \foreach \i in {1,2,...,\value{Aufgabe}} {
+%         \@ifundefined{storedsolution\romannumeral\i}{
+%             % Solution is undefined, do nothing
+%         }{  \paragraph{Lösung zu Aufgabe \, \i:}
+%             \csname storedsolution\romannumeral\i\endcsname
+%         }
+%     }
+% }
+% \makeatother
+
+
+
 \makeatletter
-\ProvideDocumentCommand{\printsols}{}{ 
-    \foreach \i in {1,2,...,\value{Aufgabe}} {
-        \@ifundefined{storedsolution\romannumeral\i}{
-            % Solution is undefined, do nothing
-        }{  \paragraph{Lösung zu Aufgabe \, \i:}
-            \csname storedsolution\romannumeral\i\endcsname
+\ProvideDocumentCommand{\printsols}{o}{ 
+    \IfNoValueTF{#1}{
+        % If no argument is provided, print all solutions
+        \foreach \i in {1,2,...,\value{Aufgabe}} {
+            \@ifundefined{storedsolution\romannumeral\i}{
+                % Solution is undefined, do nothing
+            }{  
+                \paragraph{Lösung zu Aufgabe \i:}
+                \csname storedsolution\romannumeral\i\endcsname
+            }
+        }
+    }{
+        % If an argument is provided, print the specified solution
+        \@ifundefined{storedsolution\romannumeral#1}{
+            % Solution is undefined, provide a message
+            \paragraph{Lösung zu Aufgabe #1:}
+            Solution not found.
+        }{  
+            \paragraph{Lösung zu Aufgabe #1:}
+            \csname storedsolution\romannumeral#1\endcsname
         }
     }
 }
 \makeatother
+
 
 
 

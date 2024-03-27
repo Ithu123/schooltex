@@ -18,7 +18,7 @@
 %grid command
 \ProvideDocumentCommand{\grid}{O{0}}{
 \par
-
+\setlength{\pointspace}{-0.4cm} % For spacing of points
 
 \pgfmathsetmacro{\theight}{scalar(\gettextheight)}
 \pgfmathsetmacro{\pat}{scalar(\getpagetotal)}

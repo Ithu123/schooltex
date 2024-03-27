@@ -190,8 +190,10 @@
 
 
 \makeatletter
-\ProvideDocumentCommand{\printsols}{o}{ 
-    \IfNoValueTF{#1}{
+\ProvideDocumentCommand{\printsols}{o}
+{ 
+    \IfNoValueTF{#1}
+    {
         % If no argument is provided, print all solutions
         \foreach \i in {1,2,...,\value{Aufgabe}} {
             \@ifundefined{storedsolution\romannumeral\i}{
@@ -201,20 +203,40 @@
                 \csname storedsolution\romannumeral\i\endcsname
             }
         }
-    }{
-        % If an argument is provided, print the specified solution
-        \@ifundefined{storedsolution\romannumeral#1}{
-            % Solution is undefined, provide a message
-            \paragraph{Lösung zu Aufgabe #1:}
-            Solution not found.
-        }{  
-            \paragraph{Lösung zu Aufgabe #1:}
-            \csname storedsolution\romannumeral#1\endcsname
+    }
+    {
+        % Check if the argument is "last"
+        \ifstrequal{#1}{last}{
+            % Print the last solution
+            \edef\lastsolution{\number\numexpr\value{Aufgabe}\relax}
+            \@ifundefined{storedsolution\romannumeral\lastsolution}{
+                % Solution is undefined, provide a message
+                \paragraph{Lösung zur letzten Aufgabe:}
+                Solution not found.
+            }{  
+                \paragraph{Lösung zu Aufgabe \lastsolution:}
+                \csname storedsolution\romannumeral\lastsolution\endcsname
+            }
+        }{
+            % Check if the argument is a number
+            \ifnum\pdfstrcmp{#1}{\number\numexpr#1}=0
+                % If it's a number, print the solution for that number
+                \@ifundefined{storedsolution\romannumeral#1}{
+                    % Solution is undefined, provide a message
+                    \paragraph{Lösung zu Aufgabe #1:}
+                    Solution not found.
+                }{  
+                    \paragraph{Lösung zu Aufgabe #1:}
+                    \csname storedsolution\romannumeral#1\endcsname
+                }
+            \else
+                % If it's not "last" or a number, print an error message
+                \paragraph{Error:} Invalid argument.
+            \fi
         }
     }
 }
 \makeatother
-
 
 
 

@@ -24,23 +24,23 @@
 
 \tableofcontents
 
-\section{Introduction}
-% Your introduction here
+% \section{Introduction}
+% % Your introduction here
 
-\section{Installation}
-% Instructions for installing your software or package
+% \section{Installation}
+% % Instructions for installing your software or package
 
-\section{Usage}
-% Instructions for using your software or package
+% \section{Usage}
+% % Instructions for using your software or package
 
-\section{Examples}
-% Code examples or usage scenarios
+% \section{Examples}
+% % Code examples or usage scenarios
 
-\section{FAQ}
-% Frequently asked questions and answers
+% \section{FAQ}
+% % Frequently asked questions and answers
 
-\section{Conclusion}
-% Final thoughts or concluding remarks
+% \section{Conclusion}
+% % Final thoughts or concluding remarks
 
 % Typical commands in the margin
 \section*{Commands}
@@ -53,6 +53,14 @@ exercise. Following options should be present:
     \item \opt{position}: Choose from: \opt{up}, \opt{down}, \opt{left}, \opt{right}. The materials get placed accordingly.
     \item \opt{material}: Should be possible to use \texttt{\textbackslash image} or any \texttt{table}-command
 \end{itemize}
+Further Specs:
+\begin{itemize}
+    \item The Env. should always place the according to the available space, eighther in one line or multiple lines.
+    \item The width of each material should be adjustable. 
+    \item The material should be seperated by a \texttt{;} , need a command to escape ;.
+    \item The Ex. text should flow around the materials.
+\end{itemize}
+
 
 \cmd{\image[\opt{options}]\{\opt{image1}\}}: A non floating single image witch has the following options: 
 \begin{itemize}
@@ -61,8 +69,13 @@ exercise. Following options should be present:
     \item \opt{label} A Label for reference.
 \end{itemize}
 
+
+
+
 \cmd{\multiimage[\opt{options}]\{\opt{image1},\opt{image2},...\}}: A non floating image command, wich takes one or more 
 images, and puts the next to each other. Non-compatible with \texttt{materials}
+
+The image should have the 
 
 
 
@@ -75,8 +88,15 @@ images, and puts the next to each other. Non-compatible with \texttt{materials}
     \item \opt{points} : Decimal number, declares the points given to each Ex.
     \item \opt{symbol} : Integer, Chooses from diffrent symbols to put a the margin. If empty it defaults to a little sheet with a pen.
 \end{itemize}
-Please note that for now to change the symbol the point bracket must be present
+Please note that for now to change the symbol, the point bracket must be present.
 
+
+\section*{Thoughts on structure}
+\paragraph*{Label and caption:} There should be a function wich takes label and caption
+and handels them:
+\begin{itemize}
+    \item if only a lable is specified, the caption should just read: "figure 1".
+\end{itemize}
 
 
 

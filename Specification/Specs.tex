@@ -1,0 +1,59 @@
+\documentclass{scrartcl}
+
+% Packages for document formatting
+\usepackage{geometry} % Adjust page margins
+\usepackage{parskip} % Add space between paragraphs
+\usepackage{hyperref} % Create hyperlinks
+\usepackage{listings} % Typeset code listings
+\usepackage{marginnote} % Place notes in the margin
+\usepackage{enumitem} % Customize lists
+
+% Document metadata
+\title{My Documentation Title}
+\author{Author Name}
+\date{\today}
+
+% Define a command for margin notes
+% \newcommand{\cmd}[1]{\marginnote{\texttt{\string#1}}}
+\newcommand{\cmd}[1]{\paragraph*{\texttt{\string#1}}}
+\newcommand{\opt}[1]{\texttt{<\string#1}>}
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+% Your introduction here
+
+\section{Installation}
+% Instructions for installing your software or package
+
+\section{Usage}
+% Instructions for using your software or package
+
+\section{Examples}
+% Code examples or usage scenarios
+
+\section{FAQ}
+% Frequently asked questions and answers
+
+\section{Conclusion}
+% Final thoughts or concluding remarks
+
+% Typical commands in the margin
+\section*{Commands}
+\cmd{\grid[<length>]}: This produces a grid of width textwidth. \texttt{<length>}
+is an integer, wich defines the length of the grid in centimeter. If left empty, it will span to the end of the page.
+% Bibliography if needed
+%\bibliographystyle{plain}
+%\bibliography{references}
+\section*{Enviroments}
+\cmd{Aufgabe[<points>][<symbol>]}Defines a new exercise.
+\begin{itemize}
+    \item \opt{points}: Decimal number, declares the points given to each Ex.
+    \item \opt{symbol}: Integer, Chooses from diffrent symbols to put a the margin. If empty it defaults to a little sheet with a pen.
+\end{itemize}
+Please note that for now to change the symbol the point bracket must be present
+
+\end{document}

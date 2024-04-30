@@ -68,7 +68,7 @@
 
 \newcounter{AufgabeCounter}
 \newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercises
-\ProvideDocumentEnvironment{Aufgabe}{O{0} O{0}}{%
+\ProvideDocumentEnvironment{Aufgabe}{O{0} O{1}}{%
     \setkeys{AufgabeKeys}{symbol=#2}% Set the symbol based on the argument
     \setlength{\GesamtP}{\Punkte pt} %Gesamtpunkte aufrufen
     \setlength{\pointspace}{0cm} % restor from teilaufgabe

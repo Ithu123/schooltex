@@ -17,8 +17,7 @@
 \newcommand{\getbaselineskip}{\the\baselineskip}
 %grid command
 \ProvideDocumentCommand{\grid}{O{0}}{
-\par
-
+\vspace{\baselineskip}
 
 \pgfmathsetmacro{\theight}{scalar(\gettextheight)}
 \pgfmathsetmacro{\pat}{scalar(\getpagetotal)}
@@ -32,7 +31,7 @@
 \else
   \pgfmathsetmacro{\gridheight}{1 cm *#1 }
 \fi
-\vspace{\baselineskip}
+
 {\centering
 \begin{tikzpicture}
   \tikz 

@@ -28,60 +28,54 @@
 %     10' & Ein zweites Beispiel & Dies ist ein zweites  Beispiel & \lsg & Tafel \\ 
 % \end{SVerlauf}
 \begin{plan}
-10' & Ein Beispiel & Dies ist ein Beispiel & \lsg & Tafel \\ 
-10' & Ich teste das: &Wenn ich hier jetzt einen rießigen Text hineinschreibe, der im prinzip die gesamte
+10' & Ein Beispiel & dies ist ein Beispiel & \lsg & Tafel \\ 
+10' & Ich teste das: &Wenn ich hier jetzt einen riesigen Text hineinschreibe, der im Prinzip die gesamte
 Information über die Stunde enthält, wird das dann etwas?  & \lsg & Tafel, Dokumentenkamera \\ 
-10' & Ein zweites Beispiel & Dies ist ein zweites  Beispiel & \lsg & Tafel  \\ 
-10' & Ein zweites Beispiel & Dies ist ein zweites  Beispiel & \lsg & Tafel \\ 
+10' & Ein zweites Beispiel & dies ist ein zweites  Beispiel & \lsg & Tafel  \\ 
+10' & Ein zweites Beispiel & dies ist ein zweites  Beispiel & \lsg & Tafel \\ 
 \end{plan}
 
 
 
-\begin{removeMaterial}
-    This is some text with \material{width = 3cm, image = material fuck off} that should be removed.
-\end{removeMaterial}
-    
-    % Print the processed content
-    This is it: \printmaterial
-
-
-
-
-<<<<<<< HEAD
 \begin{Aufgabe}[1] \textbf{Aufgabe 1}
     \blindtext
-    \materials[subcaptions = {a,b}]{example-image-a,example-image-b}
-=======
-
+    \multiimage{example-image-a,example-image-b}
+\end{Aufgabe}
 \begin{Aufgabe}
-    \blindtext 
-   
->>>>>>> 56a39369bff25051fe3e24f1b8ff832dd6d5232f
+    \blindtext
 \end{Aufgabe}
 \begin{minipage}[t]{0.5\textwidth}
     \begin{Aufgabe}[0]
-        Eine Aufgabe mit Teilaufgabe
+        eine Aufgabe mit Teilaufgabe
         \teilaufgabe[4]{Dies ist eine Teilaufgabe. Sie geht ein bisschen länger.}
     \end{Aufgabe}
 \end{minipage}
 \begin{Aufgabe}[5]
     Eine Aufgabe mit Teilaufgabe
-    \teilaufgabe[4]{Dies ist eine Teilaufgabe. Sie geht ein bisschen länger, sodass man das alignement sieht denke ich.}
-    \teilaufgabe[3]{Dies ist eine Teilaufgabe. Sie geht ein bisschen länger, sodass man das alignement sieht denke ich.}
+    \teilaufgabe[4]{Dies ist eine Teilaufgabe. Sie geht ein bisschen länger, sodass man das Alignment sieht denke ich.}
+    \teilaufgabe[3]{Dies ist eine Teilaufgabe. Sie geht ein bisschen länger, sodass man das Alignment sieht denke ich.}
     \teilaufgabe[2]{Dies ist eine Teilaufgabe.}
     \teilaufgabe[1]{\blindtext}
     \grid
 \end{Aufgabe}
-
 \begin{Aufgabe}[1]
     Eine Aufgabe mit grid.
     \grid
 \end{Aufgabe}
 
 \begin{Aufgabe}[1]
-    Eine Aufgabe mit 4cm langem grid.
+    Eine Aufgabe mit 4 cm langem grid.
     \grid[4]
 \end{Aufgabe}
+
+\begin{minipage}[t]{0.5\textwidth}
+ Ein dünnes Grid: \grid   
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+    Ein dünnes Grid für 3 cm: \grid[3] 
+   \end{minipage}
+
+
 
 % \begin{Aufgabe}
 %     \blindtext

@@ -63,98 +63,59 @@
 \newlength\ZwischenP
 
 \newlength{\pointspace}     % Space before the points
-\setlength{\pointspace}{0.8cm}
-\marginparsep8mm
+\setlength{\pointspace}{0cm}
+% \marginparsep8mm
 
 \newcounter{AufgabeCounter}
 \newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercises
-\ProvideDocumentEnvironment{Aufgabe}{O{0} O{0}}{%
+
+
+
+
+
+
+
+\newcommand{\materialoptions}{}
+
+
+\ProvideDocumentEnvironment{Aufgabe}{O{0} O{1} +b }{%
+    % Replace \material{...} with nothing, while storing \material contents
     \setkeys{AufgabeKeys}{symbol=#2}% Set the symbol based on the argument
     \setlength{\GesamtP}{\Punkte pt} %Gesamtpunkte aufrufen
     \setlength{\pointspace}{0cm} % restor from teilaufgabe
 
     % Here begins the actual exercise
     \refstepcounter{AufgabeCounter}
-    \paragraph{\Aufg\, \theAufgabe} \setlength{\AufgP}{#1 pt}  \setcounter{TA}{1} \refstepcounter{Aufgabe}  
-    }{
+    \paragraph{\margin_symbol\Aufg\, \theAufgabe} \setlength{\AufgP}{#1 pt}  \setcounter{TA}{1} \refstepcounter{Aufgabe}#3
+    
+    
 \ifdim\AufgP=0pt
-    \relax
+        \relax
 \else
-    \vspace{\pointspace} \marginpar{\vspace{-4mm}\rule{0.8cm}{0.5pt}/\strip@pt\AufgP} 
-% Punktzahlrechner am Ende
-    \addtolength{\GesamtP}{\AufgP}						% Die neue Gesamtpunktzahl angeben
-    \setlength{\AufgP}{0pt}								% Aufgabenpunkte für die nächste Aufgabe zurücksetzen
-    \xdef\Punkte{\strip@pt\GesamtP} 					% Gesamtpunkte Global Speichern, xdef expandiert das Makro
+        \nopagebreak
+        \leavevmode\marginnote{\rule{0.8cm}{0.5pt}/\strip@pt\AufgP}[\pointspace]
+        \vspace{\baselineskip}
+        % Punktzahlrechner am Ende
+        \addtolength{\GesamtP}{\AufgP}						% Die neue Gesamtpunktzahl angeben
+        \setlength{\AufgP}{0pt}								% Aufgabenpunkte für die nächste Aufgabe zurücksetzen
+        \xdef\Punkte{\strip@pt\GesamtP} 					% Gesamtpunkte Global Speichern, xdef expandiert das Makro
 \fi
-    }
-
-
-
-
+}{}
 
 \ProvideDocumentCommand{\teilaufgabe}{ O{0} m}{%
-    \setlength{\pointspace}{0.8cm}
+    \setlength{\pointspace}{0.4cm}
     \setlength{\parskip}{0.3em}
     \begin{addmargin}[1em]{0em}
         \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#2}
-    \end{addmargin}
+   
     \ifnum#1 = 0
-    \relax
+        \relax
     \else
-    \marginpar{\vspace{-4mm}(#1 P.)} % Punktanzahl für die Teilaufgabe am Rand
-    \addtolength{\AufgP}{#1 pt}	% Am Ende wird auf die Punktzahl die Punktzahl der Teilaufgabe dazugezählt
+        \marginnote{(#1 P.)}[-1\baselineskip] % Punktanzahl für die Teilaufgabe am Rand
+        \addtolength{\AufgP}{#1 pt}	% Am Ende wird auf die Punktzahl die Punktzahl der Teilaufgabe dazugezählt
     \fi
+    \end{addmargin}     
     }
-
-
-% Material Command: This command should take a nbumber of materials for the excersize, manily tables and pictures 
-\newlength{\materialwidth}
-\makeatletter
-\define@key{materials}{caption}{\def\materials@caption{#1}} % Define a key for the caption
-\define@key{materials}{subcaptions}{\def\materials@subcaptions{#1}} % Define a key for the caption
-\define@key{materials}{label}{\def\materials@label{#1}} % Define a key for the label
-\define@key{materials}{rescale}{\def\rescale{#1}} % Define a key for the rescale each image
-\define@key{materials}{source}{\def\materials@source{#1}}
-\define@key{materials}{widtheach}{\def\materials@widtheach{#1}}
-
-
-
-\ProvideDocumentCommand{\materials}{O{} m}{ % Optional arguments are provided as a key-value list
-  \setkeys{materials}{caption=, label=, rescale = 1.0, source = ,widtheach = ,subcaptions = , #1} % Set default values and apply user-provided values
-  
-  %Look for captions
-  \handleImageCaption{\materials@source}{\materials@caption}
-  \handlelabel{\materials@label}
-  \readlist\figruelist{#2} % Read and store the elements of the list
-
-
-  % Look for subcaptions
-  \ifdefempty{\materials@subcaptions}{ 
-    \relax
-  }{  
-    \readlist\captionlist{\materials@subcaptions}
-    }
-  % Calculate the width of each subfigure based on the number of elements and rescale factor
-\ifdefempty{\materials@widtheach}{
-  \setlength{\materialwidth}{0.8\dimexpr(\rescale\linewidth/\figruelistlen)\relax}
-  }{
-  \setlength{\materialwidth}{\materials@widtheach}
-  }
-  \begin{figure}[h!]
-    \centering
-    \foreachitem\i\in\figruelist{
-        \subcaptionbox{\captionlist[\icnt]}[\materialwidth]{\includegraphics[width = \materialwidth]{\i}}
-        \stepcounter{captioncounter}
-    }
-    \setcounter{captioncounter}{1}
-    \imagecaption 
-    \mylabel % Use the provided label or the default label for the figure label
-  \end{figure}
-}
-\makeatother
-
-
-
 
 % Solution environment
 

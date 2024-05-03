@@ -32,13 +32,15 @@
 \else
   \pgfmathsetmacro{\gridheight}{1 cm *#1 }
 \fi
-\begin{center}
+\vspace{\baselineskip}
+{\centering
 \begin{tikzpicture}
-  \tikz
+  \tikz 
   \coordinate (A) at (canvas cs:x=\gridwidth,y=\gridheight) {};
   \draw[step=0.5cm, color=gray] (0cm ,0 cm ) grid (canvas cs:x=\gridwidth,y=\gridheight);
-\end{tikzpicture}%
-\end{center}
+\end{tikzpicture}
+}%
+
 }
 
 

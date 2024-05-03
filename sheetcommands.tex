@@ -63,8 +63,8 @@
 \newlength\ZwischenP
 
 \newlength{\pointspace}     % Space before the points
-\setlength{\pointspace}{0.8cm}
-\marginparsep8mm
+\setlength{\pointspace}{0cm}
+% \marginparsep8mm
 
 \newcounter{AufgabeCounter}
 \newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercises
@@ -81,7 +81,8 @@
     \relax
 \else
 \nopagebreak
-    \vspace{\pointspace} \marginpar{\vspace{-4mm}\rule{0.8cm}{0.5pt}/\strip@pt\AufgP} 
+    \marginnote{\rule{0.8cm}{0.5pt}/\strip@pt\AufgP}[\pointspace]
+    \vspace{\baselineskip}
 % Punktzahlrechner am Ende
     \addtolength{\GesamtP}{\AufgP}						% Die neue Gesamtpunktzahl angeben
     \setlength{\AufgP}{0pt}								% Aufgabenpunkte für die nächste Aufgabe zurücksetzen
@@ -94,7 +95,7 @@
 
 
 \ProvideDocumentCommand{\teilaufgabe}{ O{0} m}{%
-    \setlength{\pointspace}{0.8cm}
+    \setlength{\pointspace}{0.4cm}
     \setlength{\parskip}{0.3em}
     \begin{addmargin}[1em]{0em}
         \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#2}
@@ -102,7 +103,7 @@
     \ifnum#1 = 0
     \relax
     \else
-    \marginpar{\vspace{-4mm}(#1 P.)} % Punktanzahl für die Teilaufgabe am Rand
+    \marginnote{(#1 P.)}[-1\baselineskip] % Punktanzahl für die Teilaufgabe am Rand
     \addtolength{\AufgP}{#1 pt}	% Am Ende wird auf die Punktzahl die Punktzahl der Teilaufgabe dazugezählt
     \fi
     }

@@ -41,11 +41,34 @@ Information über die Stunde enthält, wird das dann etwas?  & \lsg & Tafel, Dok
 
 
 
-\begin{Aufgabe} \textbf{Aufgabe 1}
+\begin{Aufgabe}[1] \textbf{Aufgabe 1}
     \blindtext
     \materials[subcaptions = {a,b}]{example-image-a,example-image-b}
 \end{Aufgabe}
+\begin{minipage}[t]{0.5\textwidth}
+    \begin{Aufgabe}[0]
+        Eine Aufgabe mit Teilaufgabe
+        \teilaufgabe[4]{Dies ist eine Teilaufgabe. Sie geht ein bisschen länger.}
+    \end{Aufgabe}
+\end{minipage}
+\begin{Aufgabe}[5]
+    Eine Aufgabe mit Teilaufgabe
+    \teilaufgabe[4]{Dies ist eine Teilaufgabe. Sie geht ein bisschen länger, sodass man das alignement sieht denke ich.}
+    \teilaufgabe[3]{Dies ist eine Teilaufgabe. Sie geht ein bisschen länger, sodass man das alignement sieht denke ich.}
+    \teilaufgabe[2]{Dies ist eine Teilaufgabe.}
+    \teilaufgabe[1]{\blindtext}
+    \grid
+\end{Aufgabe}
 
+\begin{Aufgabe}[1]
+    Eine Aufgabe mit grid.
+    \grid
+\end{Aufgabe}
+
+\begin{Aufgabe}[1]
+    Eine Aufgabe mit 4cm langem grid.
+    \grid[4]
+\end{Aufgabe}
 
 % \begin{Aufgabe}
 %     \blindtext

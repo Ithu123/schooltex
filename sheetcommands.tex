@@ -68,7 +68,47 @@
 
 \newcounter{AufgabeCounter}
 \newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercises
-\ProvideDocumentEnvironment{Aufgabe}{O{0} O{1}}{%
+
+
+
+
+
+\newlength{\materialwidth}
+\newbool{materialpresent}
+\boolfalse{materialpresent}
+
+\ProvideDocumentCommand{\material}{O{} m}{ % Optional arguments are provided as a key-value list, m=  mandatory argument = Text
+    \booltrue{materialpresent} % Tell Aufgabe, that material is present
+}
+
+
+
+% Define a global temporary variable
+\newcommand{\tempmaterial}{}
+
+% Define a command to store material content
+\newcommand{\storematerial}[1]{\gdef\tempmaterial{#1}}
+
+% Define a command to process and print stored material
+\newcommand{\printmaterial}{%
+    \StrSubstitute{\tempmaterial}{\material{\tempmaterial}}{}[\processedmaterial]% Remove \material{...} from \tempmaterial
+    \processedmaterial% Print the processed content
+}
+
+% Define a custom environment
+\newenvironment{removeMaterial}{%
+    \let\oldmaterial\material% Save the old \material definition
+    \renewcommand{\material}[1]{\storematerial{##1}}% Redefine \material to store content
+}{%
+    \let\material\oldmaterial% Restore the old \material definition
+}
+
+
+
+
+
+\ProvideDocumentEnvironment{Aufgabe}{O{0} O{1} +b }{%
+% Replace \material{...} with nothing, while storing \material contents
     \setkeys{AufgabeKeys}{symbol=#2}% Set the symbol based on the argument
     \setlength{\GesamtP}{\Punkte pt} %Gesamtpunkte aufrufen
     \setlength{\pointspace}{0cm} % restor from teilaufgabe
@@ -90,9 +130,8 @@
 \fi
     }
 
-
-
-
+    \boolfalse{materialpresent} % reset material
+    }{}
 
 \ProvideDocumentCommand{\teilaufgabe}{ O{0} m}{%
     \setlength{\pointspace}{0.4cm}
@@ -109,8 +148,16 @@
     }
 
 
+
+% New try Material command
+
+
+
+
+
+
 % Material Command: This command should take a nbumber of materials for the excersize, manily tables and pictures 
-\newlength{\materialwidth}
+
 \makeatletter
 \define@key{materials}{caption}{\def\materials@caption{#1}} % Define a key for the caption
 \define@key{materials}{subcaptions}{\def\materials@subcaptions{#1}} % Define a key for the caption

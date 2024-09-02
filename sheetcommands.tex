@@ -1,13 +1,10 @@
 %%%Counter
 \newcounter{Aufgabe}
 \newcounter{Loesung}
-%\setcounter{Loesung}{1}
+
 
 \newcounter{TA}
 \setcounter{TA}{1}
-
-%\newcounter{TL}
-%\setcounter{TL}{1}
 
 \newcount\myvar
 
@@ -24,8 +21,6 @@
 
 
 %%%Hier fängt die Aufgabenumgebung an
-
-
 \makeatletter
 \define@key{AufgabeKeys}{symbol}{%
     \ifcase#1
@@ -66,7 +61,10 @@
 \marginparsep8mm
 
 \newcounter{AufgabeCounter}
-\newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercises
+\newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercise
+
+
+% Aufgabenumgebung
 \ProvideDocumentEnvironment{Aufgabe}{O{0} O{0}}{%
     \setkeys{AufgabeKeys}{symbol=#2}% Set the symbol based on the argument
     \setlength{\GesamtP}{\Punkte pt} %Gesamtpunkte aufrufen
@@ -89,7 +87,7 @@
 
 
 
-
+# Teilaufgabenumgebung
 
 \ProvideDocumentCommand{\teilaufgabe}{O{0} m}{%
     \setlength{\pointspace}{0.8cm}
@@ -108,13 +106,7 @@
         \fi
     }
 
-    % \newcommand{\teilaufgabe}[1]{
-    % \setlength{\parskip}{0.3em}
-    % \begin{addmargin}[1em]{0em}  
-    %     \parbox[t]{0.6cm}{\textbf{\alph{TA})}}
-    %     \refstepcounter{TA}
-    %     \parbox[t]{0.9\linewidth}{#1}
-    % \end{addmargin} }
+   
 % Material Command: This command should take a nbumber of materials for the excersize, manily tables and pictures 
 \newlength{\materialwidth}
 \makeatletter
@@ -170,31 +162,6 @@
 % Solutions
 \newcommand{\solution}[1]{\expandafter\gdef\csname storedsolution\romannumeral\value{Aufgabe}\endcsname{#1} \setcounter{TA}{1}}
 \newcommand{\printsol}[1]{\paragraph{Lösung Aufgabe \, #1} \csname storedsolution\romannumeral #1\endcsname}
-
-% \ProvideDocumentCommand{\solutionpart}{m}{%
-%     \setlength{\parskip}{0.3em}
-%     \begin{addmargin}[1em]{0em}
-%         \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#1}
-%     \end{addmargin}
-%     }
-
-
-
-% Give me all the solutions
-% Ab hier steht die funktionierende Lösung bevor Chat darin herumgepfuscht hat
-% \makeatletter
-% \ProvideDocumentCommand{\printsols}{}{ 
-%     \foreach \i in {1,2,...,\value{Aufgabe}} {
-%         \@ifundefined{storedsolution\romannumeral\i}{
-%             % Solution is undefined, do nothing
-%         }{  \paragraph{Lösung zu Aufgabe \, \i:}
-%             \csname storedsolution\romannumeral\i\endcsname
-%         }
-%     }
-% }
-% \makeatother
-
-
 
 \makeatletter
 \ProvideDocumentCommand{\printsols}{o}
@@ -271,9 +238,6 @@
 \\
 \textbf{Schreibe unter jede Textaufgabe einen Antwortsatz.}
 \hrule}
-
-
-
 
 
 

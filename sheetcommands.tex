@@ -16,7 +16,6 @@
 \ProvideTextCommandDefault{\schriftlich}{1}
 \ProvideTextCommandDefault{\mitTR}{2}
 \ProvideTextCommandDefault{\ohneTR}{3}
-\ProvideTextCommandDefault{\Aufg}{Aufgabe\,}
 
 %Stufenaufgaben
 \ProvideTextCommandDefault{\einS}{991}
@@ -75,7 +74,7 @@
 
     % Here begins the actual exercise
     \refstepcounter{AufgabeCounter}
-    \paragraph{\Aufg\, \theAufgabe} \setlength{\AufgP}{#1 pt}  \setcounter{TA}{1} \refstepcounter{Aufgabe}  
+    \paragraph{Aufgabe\, \theAufgabe} \setlength{\AufgP}{#1 pt}  \setcounter{TA}{1} \refstepcounter{Aufgabe}  
     }{
 \ifdim\AufgP=0pt
     \relax

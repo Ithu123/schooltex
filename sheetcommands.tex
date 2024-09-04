@@ -3,6 +3,7 @@
 \newcounter{Loesung}
 
 
+
 \newcounter{TA}
 \setcounter{TA}{1}
 
@@ -65,6 +66,10 @@
 
 
 % Aufgabenumgebung
+\newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercise
+
+
+% Aufgabenumgebung
 \ProvideDocumentEnvironment{Aufgabe}{O{0} O{0}}{%
     \setkeys{AufgabeKeys}{symbol=#2}% Set the symbol based on the argument
     \setlength{\GesamtP}{\Punkte pt} %Gesamtpunkte aufrufen
@@ -78,6 +83,13 @@
 \ifdim\AufgP=0pt
         \relax
 \else
+        \nopagebreak
+        \leavevmode\marginnote{\rule{0.8cm}{0.5pt}/\strip@pt\AufgP}[\pointspace]
+        \vspace{\baselineskip}
+        % Punktzahlrechner am Ende
+        \addtolength{\GesamtP}{\AufgP}						% Die neue Gesamtpunktzahl angeben
+        \setlength{\AufgP}{0pt}								% Aufgabenpunkte für die nächste Aufgabe zurücksetzen
+        \xdef\Punkte{\strip@pt\GesamtP} 					% Gesamtpunkte Global Speichern, xdef expandiert das Makro
         \nopagebreak
         \leavevmode\marginnote{\rule{0.8cm}{0.5pt}/\strip@pt\AufgP}[\pointspace]
         \vspace{\baselineskip}
@@ -109,6 +121,7 @@
         \fi
     }
 
+   
    
 % Material Command: This command should take a nbumber of materials for the excersize, manily tables and pictures 
 \newlength{\materialwidth}

@@ -92,24 +92,24 @@
 
 % Teilaufgabenumgebung
 
-\ProvideDocumentCommand{\teilaufgabe}{O{0} m}{%
-    \setlength{\pointspace}{0.8cm}
-    \setlength{\parskip}{0.3em}
-    \begin{addmargin}[1em]{0em}
-        \parbox[t]{0.6cm}{\textbf{\alph{TA})}}
-        \refstepcounter{TA}
-        \parbox[t]{0.9\linewidth}{#2}
-        \ifnum#1 = 0
-            Wir sind am Ende
-            \relax
-        \else
-            \marginpar{\vspace{-4mm}(#1 P.)} % Punktanzahl für die Teilaufgabe am Rand
-            \addtolength{\AufgP}{#1 pt}	% Am Ende wird auf die Punktzahl die Punktzahl der Teilaufgabe dazugezählt
-        \fi
-    \end{addmargin}
-        }
+% \ProvideDocumentCommand{\teilaufgabe}{O{0} m}{%
+%     \setlength{\pointspace}{0.8cm}
+%     \setlength{\parskip}{0.3em}
+%     \begin{addmargin}[1em]{0em}
+%         \parbox[t]{0.6cm}{\textbf{\alph{TA})}}
+%         \refstepcounter{TA}
+%         \parbox[t]{0.9\linewidth}{#2}
+%         % \ifnum#1 = 0
+%         %     Wir sind am Ende
+%         %     \relax
+%         % \else
+%         %     \marginpar{\vspace{-4mm}(#1 P.)} % Punktanzahl für die Teilaufgabe am Rand
+%         %     \addtolength{\AufgP}{#1 pt}	% Am Ende wird auf die Punktzahl die Punktzahl der Teilaufgabe dazugezählt
+%         % \fi
+%     \end{addmargin}
+%         }
 
-   
+\newcommand{\teilaufgabe}[1]{\setlength{\parskip}{0.3em}\begin{addmargin}[1em]{0em}  \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#1}\end{addmargin} }
    
 % Material Command: This command should take a nbumber of materials for the excersize, manily tables and pictures 
 \newlength{\materialwidth}

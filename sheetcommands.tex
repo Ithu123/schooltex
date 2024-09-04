@@ -57,8 +57,8 @@
 \newlength\ZwischenP
 
 \newlength{\pointspace}     % Space before the points
-\setlength{\pointspace}{0.8cm}
-\marginparsep8mm
+\setlength{\pointspace}{0cm}
+% \marginparsep8mm
 
 \newcounter{AufgabeCounter}
 \newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercise
@@ -72,16 +72,19 @@
 
     % Here begins the actual exercise
     \refstepcounter{AufgabeCounter}
-    \paragraph{Aufgabe\, \theAufgabe} \setlength{\AufgP}{#1 pt}  \setcounter{TA}{1} \refstepcounter{Aufgabe}  
-    }{
+    \paragraph{\margin_symbol\Aufg\, \theAufgabe} \setlength{\AufgP}{#1 pt}  \setcounter{TA}{1} \refstepcounter{Aufgabe}#3
+    
+    
 \ifdim\AufgP=0pt
-    \relax
+        \relax
 \else
-    \vspace{\pointspace} \marginpar{\vspace{-4mm}\rule{0.8cm}{0.5pt}/\strip@pt\AufgP} 
-% Punktzahlrechner am Ende
-    \addtolength{\GesamtP}{\AufgP}						% Die neue Gesamtpunktzahl angeben
-    \setlength{\AufgP}{0pt}								% Aufgabenpunkte für die nächste Aufgabe zurücksetzen
-    \xdef\Punkte{\strip@pt\GesamtP} 					% Gesamtpunkte Global Speichern, xdef expandiert das Makro
+        \nopagebreak
+        \leavevmode\marginnote{\rule{0.8cm}{0.5pt}/\strip@pt\AufgP}[\pointspace]
+        \vspace{\baselineskip}
+        % Punktzahlrechner am Ende
+        \addtolength{\GesamtP}{\AufgP}						% Die neue Gesamtpunktzahl angeben
+        \setlength{\AufgP}{0pt}								% Aufgabenpunkte für die nächste Aufgabe zurücksetzen
+        \xdef\Punkte{\strip@pt\GesamtP} 					% Gesamtpunkte Global Speichern, xdef expandiert das Makro
 \fi
     }
 

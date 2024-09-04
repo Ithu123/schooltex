@@ -28,14 +28,43 @@
 %     10' & Ein zweites Beispiel & Dies ist ein zweites  Beispiel & \lsg & Tafel \\ 
 % \end{SVerlauf}
 \begin{plan}
-10' & Ein Beispiel & Dies ist ein Beispiel & \lsg & Tafel \\ 
-10' & Ich teste das: &Wenn ich hier jetzt einen rießigen Text hineinschreibe, der im prinzip die gesamte
+10' & Ein Beispiel & dies ist ein Beispiel & \lsg & Tafel \\ 
+10' & Ich teste das: &Wenn ich hier jetzt einen riesigen Text hineinschreibe, der im Prinzip die gesamte
 Information über die Stunde enthält, wird das dann etwas?  & \lsg & Tafel, Dokumentenkamera \\ 
-10' & Ein zweites Beispiel & Dies ist ein zweites  Beispiel & \lsg & Tafel  \\ 
-10' & Ein zweites Beispiel & Dies ist ein zweites  Beispiel & \lsg & Tafel \\ 
+10' & Ein zweites Beispiel & dies ist ein zweites  Beispiel & \lsg & Tafel  \\ 
+10' & Ein zweites Beispiel & dies ist ein zweites  Beispiel & \lsg & Tafel \\ 
 \end{plan}
 
 
+\begin{Aufgabe}[1] \textbf{Aufgabe 1}
+    \blindtext
+    \multiimage{example-image-a,example-image-b}
+\end{Aufgabe}
+\begin{Aufgabe}
+    \blindtext
+\end{Aufgabe}
+\begin{minipage}[t]{0.5\textwidth}
+    \begin{Aufgabe}[0]
+        eine Aufgabe mit Teilaufgabe
+        \teilaufgabe[4]{Dies ist eine Teilaufgabe. Sie geht ein bisschen länger.}
+    \end{Aufgabe}
+\end{minipage}
+\begin{Aufgabe}[5]
+    Eine Aufgabe mit Teilaufgabe
+    \teilaufgabe[4]{Dies ist eine Teilaufgabe. Sie geht ein bisschen länger, sodass man das Alignment sieht denke ich.}
+    \teilaufgabe[3]{Dies ist eine Teilaufgabe. Sie geht ein bisschen länger, sodass man das Alignment sieht denke ich.}
+    \teilaufgabe[2]{Dies ist eine Teilaufgabe.}
+    \teilaufgabe[1]{\blindtext}
+    \grid
+\end{Aufgabe}
+\begin{Aufgabe}[1]
+    Eine Aufgabe mit grid.
+    \grid
+\end{Aufgabe}
+
+\begin{Aufgabe}[1]
+    Eine Aufgabe mit 4 cm langem grid.
+    \grid[4]
 
 
 
@@ -43,5 +72,35 @@ Information über die Stunde enthält, wird das dann etwas?  & \lsg & Tafel, Dok
     \teilaufgabe{Das ist ein Text  \\  mit umbruch22uizt
     }
 \end{Aufgabe}
+
+\begin{minipage}[t]{0.5\textwidth}
+ Ein dünnes Grid: \grid   
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+    Ein dünnes Grid für 3 cm: \grid[3] 
+   \end{minipage}
+
+
+
+% \begin{Aufgabe}
+%     \blindtext
+% \end{Aufgabe}
+% \begin{Aufgabe}
+% Aufgabe mit einer Lösung. 
+% \solution{Das sollte jetzt die umfassende Lösung zu der Aufgabe sein.}
+% \end{Aufgabe}
+% \printsols[3]
+
+% \begin{Aufgabe}
+%     \blindtext
+%     \solution{Die noch umfassendere, aber leider nicht vollst}
+% \end{Aufgabe}
+% \printsols[last]
+% \begin{Aufgabe}
+%     \blindtext
+% \end{Aufgabe}
+
+% \printsols
+
 
 \end{document}

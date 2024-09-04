@@ -65,9 +65,6 @@
 \newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercise
 
 
-% Aufgabenumgebung
-\newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercise
-
 
 % Aufgabenumgebung
 \ProvideDocumentEnvironment{Aufgabe}{O{0} O{0}}{%
@@ -78,21 +75,12 @@
     % Here begins the actual exercise
     \refstepcounter{AufgabeCounter}
     \paragraph{Aufgabe\, \theAufgabe} \setlength{\AufgP}{#1 pt}  \setcounter{TA}{1} \refstepcounter{Aufgabe}
-    
-    
 \ifdim\AufgP=0pt
         \relax
 \else
         \nopagebreak
         \leavevmode\marginnote{\rule{0.8cm}{0.5pt}/\strip@pt\AufgP}[\pointspace]
-        \vspace{\baselineskip}
-        % Punktzahlrechner am Ende
-        \addtolength{\GesamtP}{\AufgP}						% Die neue Gesamtpunktzahl angeben
-        \setlength{\AufgP}{0pt}								% Aufgabenpunkte für die nächste Aufgabe zurücksetzen
-        \xdef\Punkte{\strip@pt\GesamtP} 					% Gesamtpunkte Global Speichern, xdef expandiert das Makro
-        \nopagebreak
-        \leavevmode\marginnote{\rule{0.8cm}{0.5pt}/\strip@pt\AufgP}[\pointspace]
-        \vspace{\baselineskip}
+        %\vspace{\baselineskip}
         % Punktzahlrechner am Ende
         \addtolength{\GesamtP}{\AufgP}						% Die neue Gesamtpunktzahl angeben
         \setlength{\AufgP}{0pt}								% Aufgabenpunkte für die nächste Aufgabe zurücksetzen
@@ -112,14 +100,14 @@
         \refstepcounter{TA}
         \parbox[t]{0.9\linewidth}{#2}
         \ifnum#1 = 0
+            Wir sind am Ende
             \relax
-            \end{addmargin}
         \else
             \marginpar{\vspace{-4mm}(#1 P.)} % Punktanzahl für die Teilaufgabe am Rand
             \addtolength{\AufgP}{#1 pt}	% Am Ende wird auf die Punktzahl die Punktzahl der Teilaufgabe dazugezählt
-            \end{addmargin}
         \fi
-    }
+    \end{addmargin}
+        }
 
    
    

@@ -18,7 +18,11 @@
       \IfStrEq{#1}{smalllandscape}{%
         \includepdf[pages=-, nup=1x2, doublepages, frame]{\Path/#2/#2}%
       }{%
-        \includepdf[pages=-]{\Path/#2/#2}% Default case
+          \IfStrEq{#1}{landscape}{%
+          \includepdf[pages=-, landscape]{\Path/#2/#2}%
+        }{%
+          \includepdf[pages=-]{\Path/#2/#2}% Default case
+        }%
       }%
     }%
     \addcontentsline{toc}{subsection}{#2}%
@@ -26,7 +30,6 @@
   }%
 }
 \makeatother
-
     
 %Stundenverlauf
 %Methoden

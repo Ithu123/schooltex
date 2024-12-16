@@ -1,0 +1,307 @@
+%%%Counter
+\newcounter{Aufgabe}
+\newcounter{Loesung}
+
+
+
+\newcounter{TA}
+\setcounter{TA}{1}
+
+\newcount\myvar
+
+
+%%% Angaben für Symbolzahlen
+\ProvideTextCommandDefault{\schriftlich}{1}
+\ProvideTextCommandDefault{\mitTR}{2}
+\ProvideTextCommandDefault{\ohneTR}{3}
+
+%Stufenaufgaben
+\ProvideTextCommandDefault{\einS}{991}
+\ProvideTextCommandDefault{\zweiS}{992}
+\ProvideTextCommandDefault{\dreiS}{993}
+
+
+%%%Hier fängt die Aufgabenumgebung an
+\makeatletter
+\define@key{AufgabeKeys}{symbol}{%
+    \ifcase#1
+        \def\margin_symbol{}% 0
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/contract}}}}% 1
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc}}}}% 2
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc}}}}% 3
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc} \includegraphics[height=8pt]{Icons/contract}}}}% 12
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc} \includegraphics[height=8pt]{Icons/contract}}}}% 21
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc} \includegraphics[height=8pt]{Icons/contract}}}}% 13
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc} \includegraphics[height=8pt]{Icons/contract}}}}% 31
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar$}}}% 991
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar\bigstar$}}}% 992
+    \or
+        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar\bigstar\bigstar$}}}% 993
+    \else
+        \def\margin_symbol{}% Default
+    \fi
+}
+
+
+\newlength\GesamtP	% Die Gesamtpunktzahl
+\newlength\AufgP 	% Die Punkte innerhalb einer Aufgabe
+\xdef\Punkte{0}		% Dass es bei der ersten Aufgabe nicht heißt, das gibt es nicht
+\newlength\ZwischenP
+
+\newlength{\pointspace}     % Space before the points
+\setlength{\pointspace}{0cm}
+% \marginparsep8mm
+
+\newcounter{AufgabeCounter}
+\newcounter{SolutionCounter}[AufgabeCounter] % Use the same counter for solutions, reset with exercise
+
+
+
+% Aufgabenumgebung
+\ProvideDocumentEnvironment{Aufgabe}{O{0} O{0}}{%
+    \setkeys{AufgabeKeys}{symbol=#2}% Set the symbol based on the argument
+    \setlength{\GesamtP}{\Punkte pt} %Gesamtpunkte aufrufen
+    \setlength{\pointspace}{0cm} % restor from teilaufgabe
+
+    % Here begins the actual exercise
+    \refstepcounter{AufgabeCounter}
+    \paragraph{Aufgabe\, \theAufgabe} \setlength{\AufgP}{#1 pt}  \setcounter{TA}{1} \refstepcounter{Aufgabe}
+\ifdim\AufgP=0pt
+        \relax
+\else
+        \nopagebreak
+        \leavevmode\marginnote{\rule{0.8cm}{0.5pt}/\strip@pt\AufgP}[\pointspace]
+        %\vspace{\baselineskip}
+        % Punktzahlrechner am Ende
+        \addtolength{\GesamtP}{\AufgP}						% Die neue Gesamtpunktzahl angeben
+        \setlength{\AufgP}{0pt}								% Aufgabenpunkte für die nächste Aufgabe zurücksetzen
+        \xdef\Punkte{\strip@pt\GesamtP} 					% Gesamtpunkte Global Speichern, xdef expandiert das Makro
+\fi
+    }
+
+
+
+% Teilaufgabenumgebung
+
+% \ProvideDocumentCommand{\teilaufgabe}{O{0} m}{%
+%     \setlength{\pointspace}{0.8cm}
+%     \setlength{\parskip}{0.3em}
+%     \begin{addmargin}[1em]{0em}
+%         \parbox[t]{0.6cm}{\textbf{\alph{TA})}}
+%         \refstepcounter{TA}
+%         \parbox[t]{0.9\linewidth}{#2}
+%         % \ifnum#1 = 0
+%         %     Wir sind am Ende
+%         %     \relax
+%         % \else
+%         %     \marginpar{\vspace{-4mm}(#1 P.)} % Punktanzahl für die Teilaufgabe am Rand
+%         %     \addtolength{\AufgP}{#1 pt}	% Am Ende wird auf die Punktzahl die Punktzahl der Teilaufgabe dazugezählt
+%         % \fi
+%     \end{addmargin}
+%         }
+
+\newcommand{\teilaufgabe}[1]{\setlength{\parskip}{0.3em}\begin{addmargin}[1em]{0em}  \parbox[t]{0.6cm}{\textbf{\alph{TA})}}\refstepcounter{TA}\parbox[t]{0.9\linewidth}{#1}\end{addmargin} }
+   
+% Material Command: This command should take a nbumber of materials for the excersize, manily tables and pictures 
+\newlength{\materialwidth}
+\makeatletter
+\define@key{materials}{caption}{\def\materials@caption{#1}} % Define a key for the caption
+\define@key{materials}{subcaptions}{\def\materials@subcaptions{#1}} % Define a key for the caption
+\define@key{materials}{label}{\def\materials@label{#1}} % Define a key for the label
+\define@key{materials}{rescale}{\def\rescale{#1}} % Define a key for the rescale each image
+\define@key{materials}{source}{\def\materials@source{#1}}
+\define@key{materials}{widtheach}{\def\materials@widtheach{#1}}
+
+
+
+\ProvideDocumentCommand{\materials}{O{} m}{ % Optional arguments are provided as a key-value list
+  \setkeys{materials}{caption=, label=, rescale = 1.0, source = ,widtheach = ,subcaptions = , #1} % Set default values and apply user-provided values
+  
+  %Look for captions
+  \handleImageCaption{\materials@source}{\materials@caption}
+  \handlelabel{\materials@label}
+  \readlist\figruelist{#2} % Read and store the elements of the list
+
+
+  % Look for subcaptions
+  \ifdefempty{\materials@subcaptions}{ 
+    \relax
+  }{  
+    \readlist\captionlist{\materials@subcaptions}
+    }
+  % Calculate the width of each subfigure based on the number of elements and rescale factor
+\ifdefempty{\materials@widtheach}{
+  \setlength{\materialwidth}{0.8\dimexpr(\rescale\linewidth/\figruelistlen)\relax}
+  }{
+  \setlength{\materialwidth}{\materials@widtheach}
+  }
+  \begin{figure}[h!]
+    \centering
+    \foreachitem\i\in\figruelist{
+        \subcaptionbox{\captionlist[\icnt]}[\materialwidth]{\includegraphics[width = \materialwidth]{\i}}
+        \stepcounter{captioncounter}
+    }
+    \setcounter{captioncounter}{1}
+    \imagecaption 
+    \mylabel % Use the provided label or the default label for the figure label
+  \end{figure}
+}
+\makeatother
+
+
+
+
+% Solution environment
+
+
+% Solutions
+\newcommand{\solution}[1]{\expandafter\gdef\csname storedsolution\romannumeral\value{Aufgabe}\endcsname{#1} \setcounter{TA}{1}}
+\newcommand{\printsol}[1]{\paragraph{Lösung Aufgabe \, #1} \csname storedsolution\romannumeral #1\endcsname}
+
+\makeatletter
+\ProvideDocumentCommand{\printsols}{o}
+{ 
+    \IfNoValueTF{#1}
+    {
+        % If no argument is provided, print all solutions
+        \foreach \i in {1,2,...,\value{Aufgabe}} {
+            \@ifundefined{storedsolution\romannumeral\i}{
+                % Solution is undefined, do nothing
+            }{  
+                \paragraph{Lösung zu Aufgabe \i:}
+                \csname storedsolution\romannumeral\i\endcsname
+            }
+        }
+    }
+    {
+        % Check if the argument is "last"
+        \ifstrequal{#1}{last}{
+            % Print the last solution
+            \edef\lastsolution{\number\numexpr\value{Aufgabe}\relax}
+            \@ifundefined{storedsolution\romannumeral\lastsolution}{
+                % Solution is undefined, provide a message
+                \paragraph{Lösung zur letzten Aufgabe:}
+                Solution not found.
+            }{  
+                \paragraph{Lösung zu Aufgabe \lastsolution:}
+                \csname storedsolution\romannumeral\lastsolution\endcsname
+            }
+        }{
+            % Check if the argument is a number
+            \ifnum\pdfstrcmp{#1}{\number\numexpr#1}=0
+                % If it's a number, print the solution for that number
+                \@ifundefined{storedsolution\romannumeral#1}{
+                    % Solution is undefined, provide a message
+                    \paragraph{Lösung zu Aufgabe #1:}
+                    Solution not found.
+                }{  
+                    \paragraph{Lösung zu Aufgabe #1:}
+                    \csname storedsolution\romannumeral#1\endcsname
+                }
+            \else
+                % If it's not "last" or a number, print an error message
+                \paragraph{Error:} Invalid argument.
+            \fi
+        }
+    }
+}
+\makeatother
+
+
+
+%%% Ende der Klassenarbeit wird definiert
+
+\makeatletter
+\newcommand{\Ende}{\vspace{3em}\begin{center} \textbf{Viel Erfolg!} \end{center} \textbf{Erreichte Gesamtpunktzahl:}\rule{1.5cm}{0.5pt}/\Punkte   \newline \newline \newline
+\textbf{Note:}\rule{1.5cm}{0.5pt} \hfill \textbf{In Worten:} \rule{5cm}{0.5pt}\\
+\vspace{1cm}
+\makeatother
+
+\noindent
+\begin{tblr}{l X l}
+ \hspace{3cm}   & & \hspace{3cm} \\\cline{1-1}\cline{3-3}
+ Ort, Datum     & & Unterschrift
+\end{tblr} } % Das Ende der KA
+
+
+%%% Header
+\newcommand{\header}[2]{
+%\vspace{-1em}
+\textbf{Bearbeitungszeit:} #1$\,\mathrm{min}$\hfill \Datum \\
+
+\textbf{Zugelassene Hilfsmittel:} #2\\
+\\
+\textbf{Schreibe unter jede Textaufgabe einen Antwortsatz.}
+\hrule}
+
+
+
+
+
+
+\newcommand{\Aufgabeauf}[1]{
+    \myvar=#1
+
+    \ifnum\myvar=1 % Ist die Variable 1?
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/contract}}}}
+    \else \relax % Wenn nicht, bleib locker
+    \fi
+
+
+    %\mitTR
+    \ifnum\myvar=2
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc}}}}
+    \else \relax
+    \fi
+
+    %\ohneTR
+    \ifnum\myvar=3
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc}}}}
+    \else \relax
+    \fi
+
+    %Combo!schriftlich mitTR
+    \ifnum\myvar=12
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc} \includegraphics[height=8pt]{Icons/contract}}}}
+    \else \relax
+    \fi
+    \ifnum\myvar=21
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc} \includegraphics[height=8pt]{Icons/contract}}}}
+    \else \relax
+    \fi
+    %Combo! Schriftlich ohne TR
+    \ifnum\myvar=13
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc} \includegraphics[height=8pt]{Icons/contract}}}}
+    \else \relax
+    \fi
+    \ifnum\myvar=31
+        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc} \includegraphics[height=8pt]{Icons/contract}}}}
+    \else \relax
+    \fi
+
+    \ifnum\myvar=991
+        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar$}}}
+    \else \relax
+    \fi
+    \ifnum\myvar=992
+        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar\bigstar$}}}
+    \else \relax
+    \fi
+    \ifnum\myvar=993
+        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar\bigstar\bigstar$}}}
+    \else \relax
+    \fi
+    \paragraph{\margin_symbol\Aufg \theAufgabe}  \setcounter{TA}{1} \refstepcounter{Aufgabe}  
+}
+
+\newcommand{\Aufgabezu}{ }
+

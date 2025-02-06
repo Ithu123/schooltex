@@ -176,11 +176,12 @@
 \makeatletter
 \ProvideDocumentCommand{\printsols}{o}
 { 
-    \setcounter{TA}{1}
+   
     \IfNoValueTF{#1}
     {
         % If no argument is provided, print all solutions
         \foreach \i in {1,2,...,\value{Aufgabe}} {
+            \setcounter{TA}{1}
             \@ifundefined{storedsolution\romannumeral\i}{
                 % Solution is undefined, do nothing
             }{  

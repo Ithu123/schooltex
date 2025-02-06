@@ -24,32 +24,33 @@
 %%%Hier fängt die Aufgabenumgebung an
 \makeatletter
 \define@key{AufgabeKeys}{symbol}{%
-    \ifcase#1
-        \def\margin_symbol{}% 0
-    \or
-        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/contract}}}}% 1
-    \or
-        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc}}}}% 2
-    \or
-        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc}}}}% 3
-    \or
-        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc} \includegraphics[height=8pt]{Icons/contract}}}}% 12
-    \or
-        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/calc} \includegraphics[height=8pt]{Icons/contract}}}}% 21
-    \or
-        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc} \includegraphics[height=8pt]{Icons/contract}}}}% 13
-    \or
-        \def\margin_symbol{\rlap{\protect\makebox[-2em]{\includegraphics[height=8pt]{Icons/nocalc} \includegraphics[height=8pt]{Icons/contract}}}}% 31
-    \or
-        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar$}}}% 991
-    \or
-        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar\bigstar$}}}% 992
-    \or
-        \def\margin_symbol{\rlap{\protect\makebox[-3em]{$\bigstar\bigstar\bigstar$}}}% 993
+    \ifnum#1=0
+    \reversemarginpar
+    \newcommand{\markpara}{%
+    \marginnote{\includegraphics[height=8pt]{Icons/contract}}[0cm]
+    }% Kein Symbol
+    \else\ifnum#1=1
+        \def\marginsymbol{\llap{\includegraphics[height=8pt\markpara]{Icons/contract}\quad}}%
+    \else\ifnum#1=2\def\marginsymbol{\llap{\includegraphics[height=8pt]{Icons/contract}\quad}}
+        \def\marginsymbol{\llap{\includegraphics[height=8pt]{Icons/calc}\quad}}%
+    \else\ifnum#1=3
+        \def\marginsymbol{\llap{\includegraphics[height=8pt]{Icons/nocalc}\quad}}%
+    \else\ifnum#1=12 \or \ifnum#1=21
+        \def\marginsymbol{\llap{\includegraphics[height=8pt]{Icons/calc} \includegraphics[height=8pt]{Icons/contract}\quad}}%
+    \else\ifnum#1=13 \or \ifnum#1=31
+        \def\marginsymbol{\llap{\includegraphics[height=8pt]{Icons/nocalc} \includegraphics[height=8pt]{Icons/contract}\quad}}%
+    \else\ifnum#1=991
+        \def\marginsymbol{\llap{$\bigstar$\quad}}%
+    \else\ifnum#1=992
+        \def\marginsymbol{\llap{$\bigstar\bigstar$\quad}}%
+    \else\ifnum#1=993
+        \def\marginsymbol{\llap{$\bigstar\bigstar\bigstar$\quad}}%
     \else
-        \def\margin_symbol{}% Default
-    \fi
+        \def\marginsymbol{}% Standardfall (leeres Symbol)
+    \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
 }
+
+
 
 
 \newlength\GesamtP	% Die Gesamtpunktzahl
@@ -68,27 +69,32 @@
 
 % Aufgabenumgebung
 \ProvideDocumentEnvironment{Aufgabe}{O{0} O{0}}{%
-    \setkeys{AufgabeKeys}{symbol=#2}% Set the symbol based on the argument
-    \setlength{\GesamtP}{\Punkte pt} %Gesamtpunkte aufrufen
-    \setlength{\pointspace}{0cm} % restor from teilaufgabe
-
-    % Here begins the actual exercise
+    \setkeys{AufgabeKeys}{symbol=#2} % Set the symbol based on the argument
+    \setlength{\GesamtP}{\Punkte pt} % Gesamtpunkte aufrufen
+    \setlength{\pointspace}{0cm} % Restore from teilaufgabe
+   
+    % Hier beginnt die eigentliche Aufgabe
     \refstepcounter{AufgabeCounter}
-    \paragraph{Aufgabe\, \theAufgabe} \setlength{\AufgP}{#1 pt}  \setcounter{TA}{1} \refstepcounter{Aufgabe}
-\ifdim\AufgP=0pt
+    \paragraph{Aufgabe\, \theAufgabe}\markpara 
+    \setlength{\AufgP}{#1 pt}  
+    \setcounter{TA}{1} 
+    \refstepcounter{Aufgabe}
+
+    \ifdim\AufgP=0pt
         \relax
-\else
+    \else
         \nopagebreak
-        \leavevmode\marginnote{\rule{0.8cm}{0.5pt}/\strip@pt\AufgP}[\pointspace]
-        %\vspace{\baselineskip}
+        \leavevmode
+        \normalmarginpar
+        \marginnote{\rule{0.8cm}{0.5pt}/\strip@pt\AufgP}[\pointspace]
         % Punktzahlrechner am Ende
-        \addtolength{\GesamtP}{\AufgP}						% Die neue Gesamtpunktzahl angeben
-        \setlength{\AufgP}{0pt}								% Aufgabenpunkte für die nächste Aufgabe zurücksetzen
-        \xdef\Punkte{\strip@pt\GesamtP} 					% Gesamtpunkte Global Speichern, xdef expandiert das Makro
-\fi
-    }
+        \addtolength{\GesamtP}{\AufgP} % Die neue Gesamtpunktzahl angeben
+        \setlength{\AufgP}{0pt} % Aufgabenpunkte für die nächste Aufgabe zurücksetzen
+        \xdef\Punkte{\strip@pt\GesamtP} % Gesamtpunkte Global speichern
+    \fi
+}
 
-
+\makeatother
 
 % Teilaufgabenumgebung
 
@@ -170,6 +176,7 @@
 \makeatletter
 \ProvideDocumentCommand{\printsols}{o}
 { 
+    \setcounter{TA}{1}
     \IfNoValueTF{#1}
     {
         % If no argument is provided, print all solutions

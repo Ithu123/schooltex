@@ -92,7 +92,7 @@
         \setlength{\AufgP}{0pt} % Aufgabenpunkte für die nächste Aufgabe zurücksetzen
         \xdef\Punkte{\strip@pt\GesamtP} % Gesamtpunkte Global speichern
     \fi
-}{\addvspace{\baselineskip}}
+}{}
 
 \makeatother
 
@@ -172,7 +172,7 @@
 % Solutions
 \newcommand{\solution}[1]{\expandafter\gdef\csname storedsolution\romannumeral\value{Aufgabe}\endcsname{#1} \setcounter{TA}{1}}
 \newcommand{\printsol}[1]{\paragraph{Lösung Aufgabe \, #1} \csname storedsolution\romannumeral #1\endcsname}
-
+\setcounter{TA}{1}
 \makeatletter
 \ProvideDocumentCommand{\printsols}{o}
 { 

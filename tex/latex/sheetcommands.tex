@@ -228,29 +228,43 @@
 
 %%% Ende der Klassenarbeit wird definiert
 
-\makeatletter
-\newcommand{\Ende}{\vspace{3em}\begin{center} \textbf{Viel Erfolg!} \end{center} \textbf{Erreichte Gesamtpunktzahl:}\rule{1.5cm}{0.5pt}/\Punkte   \newline \newline \newline
-\textbf{Note:}\rule{1.5cm}{0.5pt} \hfill \textbf{In Worten:} \rule{5cm}{0.5pt}\\
-\vspace{1cm}
-\makeatother
+% \makeatletter
+% \newcommand{\Ende}{\vspace{3em}\begin{center} \textbf{Viel Erfolg!} \end{center} \textbf{Erreichte Gesamtpunktzahl:}\rule{1.5cm}{0.5pt}/\Punkte   \newline \newline \newline
+% \textbf{Note:}\rule{1.5cm}{0.5pt} \hfill \textbf{In Worten:} \rule{5cm}{0.5pt}\\
+% \vspace{1cm}
+% \makeatother
 
-\noindent
-\begin{tblr}{l X l}
- \hspace{3cm}   & & \hspace{3cm} \\\cline{1-1}\cline{3-3}
- Ort, Datum     & & Unterschrift
-\end{tblr} } % Das Ende der KA
+% \noindent
+% \begin{tblr}{l X l}
+%  \hspace{3cm}   & & \hspace{3cm} \\\cline{1-1}\cline{3-3}
+%  Ort, Datum     & & Unterschrift
+% \end{tblr} } % Das Ende der KA
+
+\newcommand{\Ende}{%
+  \begin{center}%
+    \textbf{Viel Erfolg!}%
+  \end{center}%
+
+  \bigskip
+
+  \textbf{Erreichte Gesamtpunktzahl:} \rule{1.5cm}{0.5pt} /\Punkte
+
+  \bigskip
+  \bigskip
+
+  \textbf{Note:} \rule{1.5cm}{0.5pt} \hfill \textbf{In Worten:} \rule{5cm}{0.5pt}
+
+  \vspace{1cm}
+
+  \noindent
+  \begin{tblr}{l X l}
+    \hspace{3cm} & & \hspace{3cm} \\
+    \cline{1-1}\cline{3-3}
+    Ort, Datum & & Unterschrift
+  \end{tblr}%
+}
 
 
-%%% Header
-% \newcommand{\header}[2]{
-%     \vspace*{-\baselineskip}
-%     \textbf{Bearbeitungszeit:} #1$\,\mathrm{min}$\hfill \Datum \\
-
-%     \textbf{Zugelassene Hilfsmittel:} #2\\
-%     \\
-%     \textbf{Schreibe unter jede Textaufgabe einen Antwortsatz.}
-%     \hrule
-%     }
 \newcommand{\header}[2]{%
 
 \begin{tblr}{

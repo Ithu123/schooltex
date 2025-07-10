@@ -242,16 +242,31 @@
 
 
 %%% Header
-\newcommand{\header}[2]{
-%\vspace{-1em}
-\textbf{Bearbeitungszeit:} #1$\,\mathrm{min}$\hfill \Datum \\
+% \newcommand{\header}[2]{
+%     \vspace*{-\baselineskip}
+%     \textbf{Bearbeitungszeit:} #1$\,\mathrm{min}$\hfill \Datum \\
 
-\textbf{Zugelassene Hilfsmittel:} #2\\
-\\
-\textbf{Schreibe unter jede Textaufgabe einen Antwortsatz.}
-\hrule}
+%     \textbf{Zugelassene Hilfsmittel:} #2\\
+%     \\
+%     \textbf{Schreibe unter jede Textaufgabe einen Antwortsatz.}
+%     \hrule
+%     }
+\newcommand{\header}[2]{%
 
+\begin{tblr}{
+  colspec = {X[1,c] X[1.5,c] X[1,c]},
+  width   = \textwidth,
+  row{1}  = {bg=gray!25},
+  rows    = {abovesep=6pt, belowsep=6pt},
+  vline{1-3} = {1.5pt,white},  
+  % hlines = {gray!50},    % falls du graue Horizontallinien möchtest
+}
+  {\textbf{Bearbeitungszeit}\\#1 \si{\minute}} 
+& {\textbf{Hilfsmittel}\\#2} 
+& {\textbf{Datum}\\\Datum} \\
+\end{tblr}
 
+}
 
 
 

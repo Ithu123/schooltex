@@ -1,39 +1,30 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{schooltex}[2023/11/23 A custom usepackage for teachers]
 
-\RequirePackage{pdfpages} % For Scriptcommand AB
-\RequirePackage{xparse}
-\RequirePackage{xstring}
-\RequirePackage{adjustbox} % For tafel/blackboard
-\RequirePackage{amssymb} % For the star in the Ex
-\RequirePackage{xcolor}
-\RequirePackage{wrapfig}
-\RequirePackage{subcaption}
-%\RequirePackage{float}
-\RequirePackage{xkeyval}
-\RequirePackage{listofitems}
-\RequirePackage{graphicx}
-\RequirePackage{etoolbox}
-\RequirePackage{url}
-\RequirePackage{tikz}
-\RequirePackage{eso-pic}
-\RequirePackage{calc}
-\RequirePackage{printlen}
-\RequirePackage{tabularray}
-\UseTblrLibrary{varwidth}
-\RequirePackage{needspace}
-\RequirePackage{listofitems}
-\RequirePackage{moresize}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{schooltex}[2023/11/23 A custom usepackage for teachers]
 
-\RequirePackage{tcolorbox}
+% --- Basis Logik & Mathe ---
+\RequirePackage{etoolbox}
+\RequirePackage{xstring}
+\RequirePackage{xkeyval}
+\RequirePackage{calc} % Zur Sicherheit für Längenberechnungen behalten
+
+% --- Grafik & Layout ---
+\RequirePackage{graphicx}
+\RequirePackage{pdfpages}
+\RequirePackage{pgfplots} 
+\pgfplotsset{compat=1.18} % Lädt TikZ automatisch mit
+\RequirePackage{tabularray}
+\UseTblrLibrary{varwidth, siunitx} % siunitx hinzugefügt, da du \si{\minute} nutzt!
+
+% --- Dokument-Struktur ---
+\RequirePackage{amssymb}
+\RequirePackage{marginnote}
+
+% --- Querverweise (Muss als letztes kommen!) ---
 \RequirePackage{cleveref}
 
-\usepackage{pgfplots}
-\pgfplotsset{compat=1.18}
-\RequirePackage{marginnote}
 \input{commands.tex}
-
-
-
 
 

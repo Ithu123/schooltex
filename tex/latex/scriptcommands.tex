@@ -8,6 +8,8 @@
 
 \makeatletter
 \NewDocumentCommand{\AB}{ O{} m }{%
+  \phantomsection
+  \label{pdf:#2}
   \@ifundefined{Path}{%
     \PackageError{schooltex}{Path not set. Please set the \string\Path macro.}{}%
   }{%

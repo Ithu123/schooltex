@@ -74,13 +74,29 @@
     \end{scshape}\newline
   }
 
+\tcbset {
+  base/.style={
+    arc=0mm, 
+    bottomtitle=0.5mm,
+    boxrule=0mm,
+    colbacktitle=green!70!black, 
+    coltitle=black,
+    colback= white,
+    fonttitle=\bfseries, 
+    left=2.5mm,
+    right=3.5mm,
+    title={#1},
+    toptitle=0.75mm,
+    breakable
+  }
+}
+\NewTotalTColorBox{\tafel}{+m}{
+  base={Tafelbild}, 
+}{#1}
 \newcounter{kap} %Counter für das Kapitel
 \newcounter{unterkap}[kap] %Counter für die Stunde (das Unterthema)
 \newcounter{unterunterkap}[unterkap]
 
-
-\providecommand\tafel[1]{\subsubsection{Tafelbild}
-\vspace{1em}\fbox{\parbox{\textwidth}{#1}}\vspace{1em}}
 
 % Tafelbildüberschriften
 \providecommand\kap[1]{\stepcounter{kap} \begin{scshape}\underline{\thekap \hspace{0.7em} #1} \end{scshape}  \vspace{1em}\\}

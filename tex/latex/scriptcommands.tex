@@ -97,14 +97,57 @@
 \newcounter{unterkap}[kap] %Counter für die Stunde (das Unterthema)
 \newcounter{unterunterkap}[unterkap]
 
+% --- Zähler zurücksetzen, wenn die Ebene darüber steigt ---
+\makeatletter
+\@addtoreset{unterkap}{kap}
+\@addtoreset{unterunterkap}{unterkap}
+\makeatother
 
-% Tafelbildüberschriften
-\providecommand\kap[1]{\stepcounter{kap} \begin{scshape}\underline{\thekap \hspace{0.7em} #1} \end{scshape}  \vspace{1em}\\}
-\providecommand\uber[1]{\refstepcounter{unterkap}\underline{\thekap .\theunterkap \hspace{0.7em} #1}  \vspace{1em}  \\}
-\providecommand\uuber[1]{\refstepcounter{unterunterkap}\underline{\thekap .\theunterkap .\theunterunterkap \hspace{0.7em} #1} \vspace{1em}\\}
+% --- Gemeinsames Styling für die Abstände ---
+% Vorher: ca 1.5em, Nachher: 1em. Verhindert Seitenumbruch nach der Zeile.
+\newcommand{\headingvspacing}{\par\addvspace{1.5em}\noindent}
+\newcommand{\headingafter}{\par\nopagebreak\vspace{0.8em}\noindent}
 
-% Ohne Nummer
-\providecommand{\kapo}[1]{ \begin{scshape}\underline{#1} \end{scshape}  \vspace{1em}\\}
-\providecommand{\ubero}[1]{\underline{#1}  \vspace{1em}  \\}
-\providecommand{\uubero}[1]{\underline{#1} \vspace{1em}\\}
+% 1. Kapitel (KAP)
+\newcommand{\kap}[1]{
+  \headingvspacing
+  \stepcounter{kap}
+  {\scshape\large \thekap\hspace{0.7em}\underline{#1}}
+  \headingafter
+}
 
+% 2. Unterkapitel (UBER)
+\newcommand{\uber}[1]{
+  \headingvspacing
+  \refstepcounter{unterkap}
+  {\thekap.\theunterkap\hspace{0.7em}\underline{#1}}
+  \headingafter
+}
+
+% 3. Unter-Unterkapitel (UUBER)
+\newcommand{\uuber}[1]{
+  \headingvspacing
+  \refstepcounter{unterunterkap}
+  {\small \thekap.\theunterkap.\theunterunterkap\hspace{0.7em}\underline{#1}}
+  \headingafter
+}
+
+% --- Varianten OHNE Nummer ---
+
+\newcommand{\kapo}[1]{
+  \headingvspacing
+  {\scshape\large \underline{#1}}
+  \headingafter
+}
+
+\newcommand{\ubero}[1]{
+  \headingvspacing
+  {\underline{#1}}
+  \headingafter
+}
+
+\newcommand{\uubero}[1]{
+  \headingvspacing
+  {\small \underline{#1}}
+  \headingafter
+}

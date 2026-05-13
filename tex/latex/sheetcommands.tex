@@ -101,59 +101,122 @@
    
 % Solution environment
 % Solutions
-\newcommand{\solution}[1]{\expandafter\gdef\csname storedsolution\romannumeral\value{Aufgabe}\endcsname{#1} \setcounter{TA}{1}}
-\newcommand{\printsol}[1]{\paragraph{Lösung Aufgabe \, #1} \csname storedsolution\romannumeral #1\endcsname}
-\setcounter{TA}{1}
-\makeatletter
-\ProvideDocumentCommand{\printsols}{o}
-{ 
-   
-    \IfNoValueTF{#1}
+
+\ExplSyntaxOn
+
+% 1. Die Liste für die Lösungen anlegen
+\prop_new:N \g_schooltex_solutions_prop
+
+% 2. Der Befehl zum Speichern (Sicher gegen Sonderzeichen)
+
+% Wir nutzen +m statt m, damit das Argument Absätze enthalten darf
+\NewDocumentCommand{\solution}{ +m }{
+  % Wir berechnen die Nummer (den Key)
+  \tl_set:Nx \l_tmpa_tl { \arabic{Aufgabe} }
+  % Wir speichern den Inhalt (#1), egal wie lang er ist
+  \prop_gput:NVn \g_schooltex_solutions_prop \l_tmpa_tl { #1 }
+  
+  \setcounter{TA}{1}
+}
+% 3. Der Befehl zum Drucken
+\NewDocumentCommand{\printsols}{o}
+{
+  \IfNoValueTF {#1}
     {
-        % If no argument is provided, print all solutions
-        \foreach \i in {1,2,...,\value{Aufgabe}} {
-            \setcounter{TA}{1}
-            \@ifundefined{storedsolution\romannumeral\i}{
-                % Solution is undefined, do nothing
-            }{  
-                \paragraph{Lösung zu Aufgabe \i:}
-                \csname storedsolution\romannumeral\i\endcsname
-            }
+      % Alle Lösungen drucken
+      \prop_map_inline:Nn \g_schooltex_solutions_prop
+        {
+          \setcounter{TA}{1}
+          \paragraph{Lösung~zu~Aufgabe~##1:}
+          ##2
         }
     }
     {
-        % Check if the argument is "last"
-        \ifstrequal{#1}{last}{
-            % Print the last solution
-            \edef\lastsolution{\number\numexpr\value{Aufgabe}\relax}
-            \@ifundefined{storedsolution\romannumeral\lastsolution}{
-                % Solution is undefined, provide a message
-                \paragraph{Lösung zur letzten Aufgabe:}
-                Solution not found.
-            }{  
-                \paragraph{Lösung zu Aufgabe \lastsolution:}
-                \csname storedsolution\romannumeral\lastsolution\endcsname
-            }
-        }{
-            % Check if the argument is a number
-            \ifnum\pdfstrcmp{#1}{\number\numexpr#1}=0
-                % If it's a number, print the solution for that number
-                \@ifundefined{storedsolution\romannumeral#1}{
-                    % Solution is undefined, provide a message
-                    \paragraph{Lösung zu Aufgabe #1:}
-                    Solution not found.
-                }{  
-                    \paragraph{Lösung zu Aufgabe #1:}
-                    \csname storedsolution\romannumeral#1\endcsname
-                }
-            \else
-                % If it's not "last" or a number, print an error message
-                \paragraph{Error:} Invalid argument.
-            \fi
+      \str_if_eq:nnTF {#1} {last}
+        { 
+          % Letzte Aufgabe: Wir holen uns erst die Nummer...
+          \tl_set:Nx \l_tmpa_tl { \arabic{Aufgabe} }
+          % ...und drucken sie
+          \schooltex_print_single_sol:V \l_tmpa_tl 
         }
+        { \schooltex_print_single_sol:n {#1} }
     }
 }
-\makeatother
+
+% 4. Hilfsbefehl zum Drucken einer einzelnen Lösung
+\cs_new:Npn \schooltex_print_single_sol:n #1
+  {
+    \prop_get:NnNTF \g_schooltex_solutions_prop {#1} \l_tmpa_tl
+      {
+        \setcounter{TA}{1}
+        \paragraph{Lösung~zu~Aufgabe~#1:}
+        \l_tmpa_tl
+      }
+      { \paragraph{Fehler:}~Lösung~zu~Aufgabe~#1~nicht~gefunden. }
+  }
+
+% Wir brauchen eine Variante des Hilfsbefehls, die Variablen versteht
+\cs_generate_variant:Nn \schooltex_print_single_sol:n { V }
+
+\ExplSyntaxOff
+
+
+
+
+
+% \newcommand{\solution}[1]{\expandafter\gdef\csname storedsolution\romannumeral\value{Aufgabe}\endcsname{#1} \setcounter{TA}{1}}
+% \newcommand{\printsol}[1]{\paragraph{Lösung Aufgabe \, #1} \csname storedsolution\romannumeral #1\endcsname}
+% \setcounter{TA}{1}
+% \makeatletter
+% \ProvideDocumentCommand{\printsols}{o}
+% { 
+   
+%     \IfNoValueTF{#1}
+%     {
+%         % If no argument is provided, print all solutions
+%         \foreach \i in {1,2,...,\value{Aufgabe}} {
+%             \setcounter{TA}{1}
+%             \@ifundefined{storedsolution\romannumeral\i}{
+%                 % Solution is undefined, do nothing
+%             }{  
+%                 \paragraph{Lösung zu Aufgabe \i:}
+%                 \csname storedsolution\romannumeral\i\endcsname
+%             }
+%         }
+%     }
+%     {
+%         % Check if the argument is "last"
+%         \ifstrequal{#1}{last}{
+%             % Print the last solution
+%             \edef\lastsolution{\number\numexpr\value{Aufgabe}\relax}
+%             \@ifundefined{storedsolution\romannumeral\lastsolution}{
+%                 % Solution is undefined, provide a message
+%                 \paragraph{Lösung zur letzten Aufgabe:}
+%                 Solution not found.
+%             }{  
+%                 \paragraph{Lösung zu Aufgabe \lastsolution:}
+%                 \csname storedsolution\romannumeral\lastsolution\endcsname
+%             }
+%         }{
+%             % Check if the argument is a number
+%             \ifnum\pdfstrcmp{#1}{\number\numexpr#1}=0
+%                 % If it's a number, print the solution for that number
+%                 \@ifundefined{storedsolution\romannumeral#1}{
+%                     % Solution is undefined, provide a message
+%                     \paragraph{Lösung zu Aufgabe #1:}
+%                     Solution not found.
+%                 }{  
+%                     \paragraph{Lösung zu Aufgabe #1:}
+%                     \csname storedsolution\romannumeral#1\endcsname
+%                 }
+%             \else
+%                 % If it's not "last" or a number, print an error message
+%                 \paragraph{Error:} Invalid argument.
+%             \fi
+%         }
+%     }
+% }
+% \makeatother
 
 \newcommand{\Ende}{%
   \begin{center}%

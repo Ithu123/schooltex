@@ -8,32 +8,52 @@
 \newcounter{versuch}
 \crefname{versuch}{Versuch}{Versuche}
 
-\makeatletter
-\NewDocumentCommand{\AB}{ O{} m }{%
+\ExplSyntaxOn
+\keys_define:nn { schooltex / AB }
+  {
+    mode .choices:nn = { small, smalllandscape, landscape, default }
+      { \tl_set:Nn \l_school_mode_tl { #1 } },
+    mode .initial:n = default,
+    % Hier könnten weitere Keys wie 'pages' oder 'frame' hin
+  }
+
+\ExplSyntaxOn
+\keys_define:nn { schooltex / AB }
+  {
+    % Wir definieren Schalter, die intern eine Hilfsvariable setzen
+    small .meta:n = { mode = small },
+    smalllandscape .meta:n = { mode = smalllandscape },
+    landscape .meta:n = { mode = landscape },
+    default .meta:n = { mode = default },
+    
+    % Das eigentliche Speicher-Feld
+    mode .tl_set:N = \l_school_mode_tl,
+    mode .initial:n = default,
+  }
+
+\NewDocumentCommand{\AB}{ O{default} m }{
+  \group_begin:
+  % Jetzt versteht er [small] direkt
+  \keys_set:nn { schooltex / AB } { #1 }
+  
   \phantomsection
   \label{pdf:#2}
-  \@ifundefined{Path}{%
-    \PackageError{schooltex}{Path not set. Please set the \string\Path macro.}{}%
-  }{%
-    \begingroup
-    \IfStrEq{#1}{small}{%
-      \includepdf[pages=-, nup=1x2, doublepages, landscape, frame]{\Path/#2/#2}%
-    }{%
-      \IfStrEq{#1}{smalllandscape}{%
-        \includepdf[pages=-, nup=1x2, doublepages, frame]{\Path/#2/#2}%
-      }{%
-          \IfStrEq{#1}{landscape}{%
-          \includepdf[pages=-, landscape]{\Path/#2/#2}%
-        }{%
-          \includepdf[pages=-]{\Path/#2/#2}% Default case
-        }%
-      }%
-    }%
-    \addcontentsline{toc}{subsection}{#2}%
-    \endgroup
-  }%
+  
+  \cs_if_exist:cTF { Path } {
+    \str_case:VnF \l_school_mode_tl {
+      { small }          { \includepdf[pages=-, nup=1x2, doublepages, landscape, frame]{\Path/#2/#2} }
+      { smalllandscape }  { \includepdf[pages=-, nup=1x2, doublepages, frame]{\Path/#2/#2} }
+      { landscape }       { \includepdf[pages=-, landscape]{\Path/#2/#2} }
+    }
+    { \includepdf[pages=-]{\Path/#2/#2} } % Default-Fall (F-Zweig von str_case)
+    
+    \addcontentsline{toc}{subsection}{#2}
+  }{
+    \PackageError{schooltex}{Path not set.}{Setze \string\Path.}
+  }
+  \group_end:
 }
-\makeatother
+\ExplSyntaxOff
     
 %Stundenverlauf
 %Methoden
@@ -76,7 +96,7 @@
 
 \tcbset {
   base/.style={
-    arc=0mm, 
+    arc=1mm, 
     bottomtitle=0.5mm,
     boxrule=0mm,
     colbacktitle=green!70!black, 
@@ -112,7 +132,7 @@
 \newcommand{\kap}[1]{
   \headingvspacing
   \stepcounter{kap}
-  {\scshape\large \thekap\hspace{0.7em}\underline{#1}}
+  \noindent\underline{{\scshape\large \thekap\hspace{0.7em}#1}}
   \headingafter
 }
 
@@ -120,7 +140,7 @@
 \newcommand{\uber}[1]{
   \headingvspacing
   \refstepcounter{unterkap}
-  {\thekap.\theunterkap\hspace{0.7em}\underline{#1}}
+  \noindent\underline{{\thekap.\theunterkap\hspace{0.7em}#1}}
   \headingafter
 }
 

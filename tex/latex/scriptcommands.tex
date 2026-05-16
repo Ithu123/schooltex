@@ -68,11 +68,9 @@
 
 
 \NewDocumentEnvironment{plan}{O{Stundenverlauf} +b}{
-  \par 
-  \vspace{\baselineskip}
+  \section{#1}
   \noindent
   \scriptsize
-  \section{#1}
 \begin{tblr}{hlines,vlines,row{1}={gray9}, colspec = {Q[c] X[2,l] X[5,l] Q[l] Q[l]}, width = \textwidth, measure = vbox, stretch = 1.2}
   \textbf{Zeit} & \textbf{Thema} & \textbf{Ausführung/Plan} & \textbf{Methode} &{ \textbf{Medien}, \\\textbf{Material} }\\
 #2
@@ -85,89 +83,87 @@
 
 \newcommand{\umbruch}[1]{\begin{tabular}[c]{@{}l@{}} #1 \end{tabular}}
 
-% Tafel
-%Überscrift
-\newenvironment{Ueber}[1]{
-  \begin{scshape}
-    \underline{#1}
-  }{
-    \end{scshape}\newline
-  }
+% --- Zähler ---
+% Das [kap] am Ende sorgt automatisch für das Zurücksetzen; @addtoreset ist nicht nötig.
+\newcounter{kap}
+\newcounter{unterkap}[kap]
+\newcounter{unterunterkap}[unterkap]
 
+% --- Grundstyling ---
 \tcbset {
-  base/.style={
+  tafel/.style={
     arc=1mm, 
     bottomtitle=0.5mm,
-    boxrule=0mm,
-    colbacktitle=green!70!black, 
-    coltitle=black,
-    colback= white,
+    boxrule=0.3mm,
+    coltitle=white,
+    colback=white,
     fonttitle=\bfseries, 
     left=2.5mm,
     right=3.5mm,
-    title={#1},
     toptitle=0.75mm,
-    breakable
+    breakable,
+    width=\linewidth,      % Zwingt die Box auf Zeilenbreite
+    before skip=1.5em,
+    after skip=1em,
+    before upper=\noindent % Verhindert Einzug in der ersten Zeile der Box
   }
 }
-\NewTotalTColorBox{\tafel}{+m}{
-  base={Tafelbild}, 
-}{#1}
-\newcounter{kap} %Counter für das Kapitel
-\newcounter{unterkap}[kap] %Counter für die Stunde (das Unterthema)
-\newcounter{unterunterkap}[unterkap]
 
-% --- Zähler zurücksetzen, wenn die Ebene darüber steigt ---
-\makeatletter
-\@addtoreset{unterkap}{kap}
-\@addtoreset{unterunterkap}{unterkap}
-\makeatother
+% --- Boxen für den Unterricht ---
+\NewTotalTColorBox{\tafel}{+m}{
+  tafel,
+  title={Tafelbild},
+  colbacktitle=green!40!black, 
+}{#1}
+
+% Neue Box speziell für Versuche (farblich abgehoben für dich)
+
+\makeatletter % Ermöglicht Zugriff auf interne Befehle mit @
 
 % --- Gemeinsames Styling für die Abstände ---
-% Vorher: ca 1.5em, Nachher: 1em. Verhindert Seitenumbruch nach der Zeile.
-\newcommand{\headingvspacing}{\par\addvspace{1.5em}\noindent}
-\newcommand{\headingafter}{\par\nopagebreak\vspace{0.8em}\noindent}
+\newcommand{\headingvspacing}{\par}
 
-% 1. Kapitel (KAP)
-\newcommand{\kap}[1]{
+% Dieser Befehl sorgt dafür, dass die Zeile NACH der Überschrift NICHT eingerückt wird
+\newcommand{\headingafter}{%
+  \par\nopagebreak\vspace{0.8em}%
+  \@afterindentfalse%
+  \@afterheading%
+}
+
+% 1. Kapitel: \kap und \kap*
+\NewDocumentCommand{\kap}{s m}{
   \headingvspacing
-  \stepcounter{kap}
-  \noindent\underline{{\scshape\large \thekap\hspace{0.7em}#1}}
+  \IfBooleanTF{#1}{
+    {\scshape\large \ul{\mbox{#2}}}
+  }{
+    \stepcounter{kap}
+    \noindent{\scshape\large \thekap\hspace{0.7em}\mbox{\ul{#2}}}
+  }
   \headingafter
 }
 
-% 2. Unterkapitel (UBER)
-\newcommand{\uber}[1]{
+% 2. Unterkapitel: \uber und \uber*
+\NewDocumentCommand{\uber}{s m}{
   \headingvspacing
-  \refstepcounter{unterkap}
-  \noindent\underline{{\thekap.\theunterkap\hspace{0.7em}#1}}
+  \IfBooleanTF{#1}{
+    \noindent\ul{\mbox{#2}}
+  }{
+    \refstepcounter{unterkap}
+    \noindent\ul{\mbox{\thekap.\theunterkap\hspace{0.7em}#2}}
+  }
   \headingafter
 }
 
-% 3. Unter-Unterkapitel (UUBER)
-\newcommand{\uuber}[1]{
+% 3. Unter-Unterkapitel: \uuber und \uuber*
+\NewDocumentCommand{\uuber}{s m}{
   \headingvspacing
-  \refstepcounter{unterunterkap}
-  {\small \thekap.\theunterkap.\theunterunterkap\hspace{0.7em}\underline{#1}}
+  \IfBooleanTF{#1}{
+    \noindent{\small \ul{\mbox{#2}}}
+  }{
+    \refstepcounter{unterunterkap}
+    \noindent{\mbox{\small \thekap.\theunterkap.\theunterunterkap\hspace{0.7em}\ul{#2}}}
+  }
   \headingafter
 }
 
-% --- Varianten OHNE Nummer ---
-
-\newcommand{\kapo}[1]{
-  \headingvspacing
-  {\scshape\large \underline{#1}}
-  \headingafter
-}
-
-\newcommand{\ubero}[1]{
-  \headingvspacing
-  {\underline{#1}}
-  \headingafter
-}
-
-\newcommand{\uubero}[1]{
-  \headingvspacing
-  {\small \underline{#1}}
-  \headingafter
-}
+\makeatother

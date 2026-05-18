@@ -10,43 +10,43 @@
 
 \ExplSyntaxOn
 \keys_define:nn { schooltex / AB }
-  {
-    mode .choices:nn = { small, smalllandscape, landscape, default }
-      { \tl_set:Nn \l_school_mode_tl { #1 } },
-    mode .initial:n = default,
-    % Hier könnten weitere Keys wie 'pages' oder 'frame' hin
-  }
+{
+  mode .choices:nn = { small, smalllandscape, landscape, default }
+    { \tl_set:Nn \l_school_mode_tl { #1 } },
+  mode .initial:n = default,
+  % Hier könnten weitere Keys wie 'pages' oder 'frame' hin
+}
 
 \ExplSyntaxOn
 \keys_define:nn { schooltex / AB }
-  {
-    % Wir definieren Schalter, die intern eine Hilfsvariable setzen
-    small .meta:n = { mode = small },
-    smalllandscape .meta:n = { mode = smalllandscape },
-    landscape .meta:n = { mode = landscape },
-    default .meta:n = { mode = default },
-    
-    % Das eigentliche Speicher-Feld
-    mode .tl_set:N = \l_school_mode_tl,
-    mode .initial:n = default,
-  }
+{
+  % Wir definieren Schalter, die intern eine Hilfsvariable setzen
+  small .meta:n = { mode = small },
+  smalllandscape .meta:n = { mode = smalllandscape },
+  landscape .meta:n = { mode = landscape },
+  default .meta:n = { mode = default },
+
+  % Das eigentliche Speicher-Feld
+  mode .tl_set:N = \l_school_mode_tl,
+  mode .initial:n = default,
+}
 
 \NewDocumentCommand{\AB}{ O{default} m }{
   \group_begin:
   % Jetzt versteht er [small] direkt
   \keys_set:nn { schooltex / AB } { #1 }
-  
+
   \phantomsection
   \label{pdf:#2}
-  
+
   \cs_if_exist:cTF { Path } {
     \str_case:VnF \l_school_mode_tl {
       { small }          { \includepdf[pages=-, nup=1x2, doublepages, landscape, frame]{\Path/#2/#2} }
-      { smalllandscape }  { \includepdf[pages=-, nup=1x2, doublepages, frame]{\Path/#2/#2} }
-      { landscape }       { \includepdf[pages=-, landscape]{\Path/#2/#2} }
+        { smalllandscape }  { \includepdf[pages=-, nup=1x2, doublepages, frame]{\Path/#2/#2} }
+        { landscape }       { \includepdf[pages=-, landscape]{\Path/#2/#2} }
     }
     { \includepdf[pages=-]{\Path/#2/#2} } % Default-Fall (F-Zweig von str_case)
-    
+
     \addcontentsline{toc}{subsection}{#2}
   }{
     \PackageError{schooltex}{Path not set.}{Setze \string\Path.}
@@ -54,7 +54,7 @@
   \group_end:
 }
 \ExplSyntaxOff
-    
+
 %Stundenverlauf
 %Methoden
 \ProvideTextCommandDefault{\lsg}{L-S G.}
@@ -71,10 +71,10 @@
   \section{#1}
   \noindent
   \scriptsize
-\begin{tblr}{hlines,vlines,row{1}={gray9}, colspec = {Q[c] X[2,l] X[5,l] Q[l] Q[l]}, width = \textwidth, measure = vbox, stretch = 1.2}
-  \textbf{Zeit} & \textbf{Thema} & \textbf{Ausführung/Plan} & \textbf{Methode} &{ \textbf{Medien}, \\\textbf{Material} }\\
-#2
-\end{tblr}
+  \begin{tblr}{hlines,vlines,row{1}={gray9}, colspec = {Q[c] X[2,l] X[5,l] Q[l] Q[l]}, width = \textwidth, measure = vbox, stretch = 1.2}
+    \textbf{Zeit} & \textbf{Thema} & \textbf{Ausführung/Plan} & \textbf{Methode} & { \textbf{Medien}, \\\textbf{Material} }\\
+    #2
+  \end{tblr}
 
 }{\addvspace{\baselineskip}}
 
@@ -89,31 +89,31 @@
 \newcounter{unterkap}[kap]
 \newcounter{unterunterkap}[unterkap]
 
-% --- Grundstyling ---
+% --- Sytling ---
 \tcbset {
-  tafel/.style={
-    arc=1mm, 
-    bottomtitle=0.5mm,
-    boxrule=0.3mm,
-    coltitle=white,
-    colback=white,
-    fonttitle=\bfseries, 
-    left=2.5mm,
-    right=3.5mm,
-    toptitle=0.75mm,
-    breakable,
-    width=\linewidth,      % Zwingt die Box auf Zeilenbreite
-    before skip=1.5em,
-    after skip=1em,
-    before upper=\noindent % Verhindert Einzug in der ersten Zeile der Box
-  }
+  base/.style={
+      arc=1mm,
+      bottomtitle=0.5mm,
+      boxrule=0.3mm,
+      colback=white,
+      fonttitle=\bfseries,
+      left=2.5mm,
+      right=3.5mm,
+      toptitle=0.75mm,
+      breakable,
+      width=\linewidth,      % Zwingt die Box auf Zeilenbreite
+      before skip=1.5em,
+      after skip=1em,
+      before upper=\noindent % Verhindert Einzug in der ersten Zeile der Box
+    }
 }
 
 % --- Boxen für den Unterricht ---
 \NewTotalTColorBox{\tafel}{+m}{
-  tafel,
+  base,
   title={Tafelbild},
-  colbacktitle=green!40!black, 
+  coltitle=white,
+  colbacktitle=green!40!black,
 }{#1}
 
 % Neue Box speziell für Versuche (farblich abgehoben für dich)
@@ -164,6 +164,99 @@
     \noindent{\mbox{\small \thekap.\theunterkap.\theunterunterkap\hspace{0.7em}\ul{#2}}}
   }
   \headingafter
+}
+
+\makeatother
+
+
+
+
+
+
+% ---- experiments ----
+
+
+
+% % --- Box ---
+% \newtcolorbox{experiments}{
+%   base,
+%   title={Versuche},
+%   colbacktitle=blue!70!black,
+% }
+% % --- Experiment ---
+% \newcounter{experiment}
+% \setcounter{experiment}{0}
+
+
+% \NewTotalTColorBox{\V}{o +m}{
+%   notitle,
+%   left*=0mm,
+%   grow to left by=3mm,
+%   grow to right by=3mm,
+%   boxrule=0mm,
+% }{
+%   \refstepcounter{experiment}
+%   \textbf{V: \thesection.\theexperiment: } #2 
+%   }
+\newcounter{experiment}[section]
+
+\NewDocumentEnvironment{experiments}{O{}}{%
+  \begin{tcolorbox}[base, title={Versuche}, colbacktitle=blue!70!black, #1]%
+  \begin{description}[font=\bfseries, leftmargin=0pt]%
+}{%
+  \end{description}%
+  \end{tcolorbox}%
+}
+
+% Befehl → \NewDocumentCommand, {} = keine Argumente
+\NewDocumentCommand{\V}{}{%
+  \refstepcounter{experiment}%
+  \item[V\,\thesection.\theexperiment:]%
+}
+
+\NewDocumentCommand{\Vtext}{+m}{%
+  \item[]\relax #1%
+}
+\NewDocumentCommand{\Vgroup}{m}{%
+  \item[\textcolor{blue!70!black}{\small\textbf{#1}}]%
+}
+
+% --- Bildbreite als Länge ---
+\newlength{\Vbildbreite}
+\setlength{\Vbildbreite}{0.45\linewidth}  % Default
+
+% --- keyvals für \Vbild ---
+
+\makeatletter
+\define@key{Vbild}{caption}{\def\Vbild@caption{#1}}
+\define@key{Vbild}{label}{\def\Vbild@label{#1}}
+\define@key{Vbild}{width}{\def\Vbild@width{#1}}
+
+% --- Umgebung für mehrere Bilder ---
+\NewDocumentEnvironment{Vbilder}{O{0.45}}{%
+  \setlength{\Vbildbreite}{#1\linewidth}%
+  \centering%
+  \par\vspace{0.5ex}%
+}{%
+  \par%
+}
+
+% --- Einzelnes Bild ---
+\NewDocumentCommand{\Vbild}{O{}m}{%
+  \def\Vbild@caption{}%
+  \def\Vbild@label{}%
+  \edef\Vbild@width{\the\Vbildbreite}%
+  \setkeys{Vbild}{#1}%
+  \begin{minipage}{\Vbild@width}%
+    \centering%
+    \includegraphics[width=\linewidth]{#2}%
+    \ifx\Vbild@caption\empty\else%
+      \captionof{figure}{\Vbild@caption}%
+    \fi%
+    \ifx\Vbild@label\empty\else%
+      \label{\Vbild@label}%
+    \fi%
+  \end{minipage}\hfill%
 }
 
 \makeatother

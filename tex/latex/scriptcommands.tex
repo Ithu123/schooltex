@@ -92,7 +92,7 @@
 % --- Sytling ---
 \tcbset {
   base/.style={
-      arc=1mm,
+      arc=0.6mm,
       bottomtitle=0.5mm,
       boxrule=0.3mm,
       colback=white,
@@ -137,7 +137,7 @@
     {\scshape\large \ul{\mbox{#2}}}
   }{
     \stepcounter{kap}
-    \noindent{\scshape\large \thekap\hspace{0.7em}\mbox{\ul{#2}}}
+    \noindent\ul{\mbox{{\scshape\large \thekap\hspace{0.7em}#2}}}
   }
   \headingafter
 }
@@ -168,44 +168,16 @@
 
 \makeatother
 
-
-
-
-
-
-% ---- experiments ----
-
-
-
-% % --- Box ---
-% \newtcolorbox{experiments}{
-%   base,
-%   title={Versuche},
-%   colbacktitle=blue!70!black,
-% }
-% % --- Experiment ---
-% \newcounter{experiment}
-% \setcounter{experiment}{0}
-
-
-% \NewTotalTColorBox{\V}{o +m}{
-%   notitle,
-%   left*=0mm,
-%   grow to left by=3mm,
-%   grow to right by=3mm,
-%   boxrule=0mm,
-% }{
-%   \refstepcounter{experiment}
-%   \textbf{V: \thesection.\theexperiment: } #2 
-%   }
 \newcounter{experiment}[section]
 
-\NewDocumentEnvironment{experiments}{O{}}{%
-  \begin{tcolorbox}[base, title={Versuche}, colbacktitle=blue!70!black, #1]%
-  \begin{description}[font=\bfseries, leftmargin=0pt]%
+\NewDocumentEnvironment{experiments}{O{Versuche}}{%
+  \subsection*{#1}
+  \begin{description}[
+    font=\bfseries,
+    leftmargin=0pt,
+  ]
 }{%
   \end{description}%
-  \end{tcolorbox}%
 }
 
 % Befehl → \NewDocumentCommand, {} = keine Argumente
@@ -218,9 +190,11 @@
   \item[]\relax #1%
 }
 \NewDocumentCommand{\Vgroup}{m}{%
-  \item[\textcolor{blue!70!black}{\small\textbf{#1}}]%
+  \item[]%
+  \noindent\textcolor{blue!70!black}{\textbf{#1}}%
+  \textcolor{blue!70!black}{\enspace\leaders\hrule height 0.4pt\hfill\kern0pt}%
+  \par\vspace{2pt}%
 }
-
 % --- Bildbreite als Länge ---
 \newlength{\Vbildbreite}
 \setlength{\Vbildbreite}{0.45\linewidth}  % Default

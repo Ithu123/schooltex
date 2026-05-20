@@ -167,8 +167,9 @@
 }
 
 \makeatother
-
 \newcounter{experiment}[section]
+\renewcommand{\theexperiment}{\thesection.\arabic{experiment}}
+\newlistof{experiments}{loe}{Versuchsverzeichnis}
 
 \NewDocumentEnvironment{experiments}{O{Versuche}}{%
   \subsection*{#1}
@@ -180,15 +181,25 @@
   \end{description}%
 }
 
-% Befehl → \NewDocumentCommand, {} = keine Argumente
-\NewDocumentCommand{\V}{}{%
+\NewDocumentCommand{\V}{o}{%
   \refstepcounter{experiment}%
-  \item[V\,\thesection.\theexperiment:]%
+  \IfNoValueTF{#1}
+    {\item[V\,\theexperiment:]}
+    {\item[V\,\theexperiment\ (#1):]\label{V:#1}%
+     \addcontentsline{loe}{experiments}{V\,\theexperiment\ \ #1}}%
+}
+
+\providecommand*{\experimentautorefname}{Versuch}
+
+
+\NewDocumentCommand{\Vref}{m}{%
+  Versuch \ref{V:#1} (#1)%
 }
 
 \NewDocumentCommand{\Vtext}{+m}{%
   \item[]\relax #1%
 }
+
 \NewDocumentCommand{\Vgroup}{m}{%
   \item[]%
   \noindent\textcolor{blue!70!black}{\textbf{#1}}%

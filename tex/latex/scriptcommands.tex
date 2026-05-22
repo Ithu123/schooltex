@@ -169,7 +169,8 @@
 \makeatother
 \newcounter{experiment}[section]
 \renewcommand{\theexperiment}{\thesection.\arabic{experiment}}
-\newlistof{experiments}{loe}{Versuchsverzeichnis}
+
+
 
 \NewDocumentEnvironment{experiments}{O{Versuche}}{%
   \subsection*{#1}
@@ -186,14 +187,24 @@
   \IfNoValueTF{#1}
     {\item[V\,\theexperiment:]}
     {\item[V\,\theexperiment\ (#1):]\label{V:#1}%
-     \addcontentsline{loe}{experiments}{V\,\theexperiment\ \ #1}}%
+     \addcontentsline{loe}{experiments}{\protect\numberline{V\,\theexperiment}#1}}%
 }
 
 \providecommand*{\experimentautorefname}{Versuch}
 
+\DeclareNewTOC[
+  extension=loe,
+  type=experiments, % Wichtig: Muss exakt dem 2. Argument aus deinem \addcontentsline entsprechen
+  listname={Versuchsverzeichnis}
+]{loe}
+\DeclareTOCStyleEntry[
+  indent=0pt,       % Einzug des Eintrags
+  numwidth=3.5em    % Platz für "V 1", "V 2" etc. (ggf. anpassen)
+]{tocline}{experiments}
+
 
 \NewDocumentCommand{\Vref}{m}{%
-  Versuch \ref{V:#1} (#1)%
+  Versuch \ref{#1} (#1)%
 }
 
 \NewDocumentCommand{\Vtext}{+m}{%

@@ -11,15 +11,6 @@
 \ExplSyntaxOn
 \keys_define:nn { schooltex / AB }
 {
-  mode .choices:nn = { small, smalllandscape, landscape, default }
-    { \tl_set:Nn \l_school_mode_tl { #1 } },
-  mode .initial:n = default,
-  % Hier könnten weitere Keys wie 'pages' oder 'frame' hin
-}
-
-\ExplSyntaxOn
-\keys_define:nn { schooltex / AB }
-{
   % Wir definieren Schalter, die intern eine Hilfsvariable setzen
   small .meta:n = { mode = small },
   smalllandscape .meta:n = { mode = smalllandscape },
@@ -41,7 +32,7 @@
 
   \cs_if_exist:cTF { Path } {
     \str_case:VnF \l_school_mode_tl {
-      { small }          { \includepdf[pages=-, nup=1x2, doublepages, landscape, frame]{\Path/#2/#2} }
+      { small }          { \includepdf[pages=-, nup=2x1, doublepages, landscape, frame]{\Path/#2/#2} }
         { smalllandscape }  { \includepdf[pages=-, nup=1x2, doublepages, frame]{\Path/#2/#2} }
         { landscape }       { \includepdf[pages=-, landscape]{\Path/#2/#2} }
     }

@@ -41,3 +41,14 @@
 
 }
 
+
+% Ein Befeh für subcation in den Minipages
+
+\makeatletter
+\providecommand{\minicaption}[1]{%
+    \def\@captype{subfigure}% Wir tricksen LaTeX lokal aus
+    \caption{#1}%            Nutzen die normale Subcaption
+}
+\makeatother
+% ----------------------------------
+

@@ -218,28 +218,51 @@
 % }
 % \makeatother
 
+% \newcommand{\Ende}{%
+%   \begin{center}%
+%     \textbf{Viel Erfolg!}%
+%   \end{center}%
+
+%   \bigskip
+
+%   \textbf{Erreichte Gesamtpunktzahl:} \rule{1.5cm}{0.5pt} /\Punkte
+
+%   \bigskip
+%   \bigskip
+
+%   \textbf{Note:} \rule{1.5cm}{0.5pt} \hfill \textbf{In Worten:} \rule{5cm}{0.5pt}
+
+%   \vspace{1cm}
+
+%   \noindent
+%   \begin{tblr}{l X l}
+%     \hspace{3cm} & & \hspace{3cm} \\
+%     \cline{1-1}\cline{3-3}
+%     Ort, Datum & & Unterschrift
+%   \end{tblr}%
+% }
+
 \newcommand{\Ende}{%
-  \begin{center}%
-    \textbf{Viel Erfolg!}%
-  \end{center}%
+\begin{center}
+      \textbf{\large Viel Erfolg!} 
+\end{center}
 
-  \bigskip
 
-  \textbf{Erreichte Gesamtpunktzahl:} \rule{1.5cm}{0.5pt} /\Punkte
+  \medskip
 
-  \bigskip
-  \bigskip
+  \begin{tblr}{
+    colspec = {X[c] Q[c] X[c]},
+    width   = \textwidth,
+    rows    = {abovesep=5pt, belowsep=5pt,bg=gray!25},
+    row{2}  = {abovesep=10pt},
+    vlines  = {1.5pt,white},
+  }
+    \textbf{Gesamtpunktzahl} &
+    \textbf{Note}&
+    \textbf{In Worten} \\
+    \rule{1.8cm}{0.4pt}\;/\;\Punkte & \rule{1.5cm}{0.4pt}\quad  & \rule{4cm}{0.4pt}
+  \end{tblr}
 
-  \textbf{Note:} \rule{1.5cm}{0.5pt} \hfill \textbf{In Worten:} \rule{5cm}{0.5pt}
-
-  \vspace{1cm}
-
-  \noindent
-  \begin{tblr}{l X l}
-    \hspace{3cm} & & \hspace{3cm} \\
-    \cline{1-1}\cline{3-3}
-    Ort, Datum & & Unterschrift
-  \end{tblr}%
 }
 
 

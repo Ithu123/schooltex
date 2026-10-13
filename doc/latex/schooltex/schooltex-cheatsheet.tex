@@ -1,0 +1,155 @@
+\documentclass[a4paper,landscape,10pt]{scrartcl}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[ngerman]{babel}
+\usepackage{csquotes}
+\usepackage[landscape,margin=10mm,top=9mm,bottom=9mm]{geometry}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\columnsep}{7mm}
+\setlength{\columnseprule}{0.3pt}
+\renewcommand{\arraystretch}{1.15}
+
+\definecolor{kopf}{gray}{0.25}
+\definecolor{zeile}{gray}{0.94}
+
+\newcommand{\cs}[1]{\texttt{\textbackslash #1}}
+\newcommand{\m}[1]{\ensuremath{\langle}\textit{#1}\ensuremath{\rangle}}
+
+\newcommand{\bereich}[1]{%
+  \par\addvspace{5pt}%
+  {\colorbox{kopf}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\bfseries\strut #1}}}%
+  \par\nopagebreak\vspace{2pt}}
+
+% Zweispaltige Tabelle: Befehl | Wirkung
+\newenvironment{befehle}
+  {\tabularx{\linewidth}{@{}>{\raggedright\arraybackslash\ttfamily}p{0.47\linewidth}>{\raggedright\arraybackslash}X@{}}}
+  {\endtabularx\par}
+
+% langer Befehl: eigene Zeile, Erklärung darunter
+\newcommand{\lang}[1]{\multicolumn{2}{@{}l@{}}{\ttfamily #1}\\}
+
+\newcommand{\bsp}[1]{\par{\footnotesize\colorbox{zeile}{\parbox{\dimexpr\linewidth-2\fboxsep}{\ttfamily\raggedright #1}}}\par\vspace{2pt}}
+
+\begin{document}
+
+{\Large\bfseries schooltex -- Cheatsheet}\hfill
+{\small \texttt{\textbackslash usepackage\{schooltex\}} \quad·\quad KOMA-Klasse, \texttt{babel}, \texttt{hyperref}, \texttt{enumitem}, \texttt{siunitx} vorher laden \quad·\quad ausführlich: \texttt{schooltex-doku.pdf}}
+\par\vspace{3pt}\hrule\vspace{4pt}
+
+\raggedcolumns
+\begin{multicols}{3}
+
+% ------------------------------------------------------------
+\bereich{Gliederung im Skript}
+\begin{befehle}
+\textbackslash kap\{\m{Titel}\}   & Kapitel \enquote{1 \textsc{Titel}} \\
+\textbackslash uber\{\m{Titel}\}  & Unterkapitel \enquote{1.1 Titel} \\
+\textbackslash uuber\{\m{Titel}\} & Unter-Unterkapitel \enquote{1.1.1} \\
+\textit{\textrm{jeweils}} *       & ohne Nummer, z.\,B. \cs{uber*}\{\dots\} \\
+\end{befehle}
+
+\bereich{Tafelbild}
+\begin{befehle}
+\textbackslash tafel\{\m{Inhalt}\} & grüne Box \enquote{Tafelbild}, umbrechbar, Absätze erlaubt \\
+\end{befehle}
+
+% ------------------------------------------------------------
+\bereich{Versuche}
+\begin{befehle}
+\lang{\textbackslash begin\{experiments\}[\m{Titel}]}
+ & Versuchsliste, Titel Standard \enquote{Versuche} \\
+\textbackslash V              & Versuch \enquote{V 3.1:} ohne Name \\
+\textbackslash V[\m{Name}]    & \enquote{V 3.1 (Name):}, Label \texttt{V:Name}, Eintrag im Verzeichnis \\
+\textbackslash Vtext\{\m{Text}\}   & Absatz ohne Nummer in der Liste \\
+\textbackslash Vgroup\{\m{Titel}\} & blaue Zwischenüberschrift mit Linie \\
+\textbackslash listoftoc\{loe\}    & Versuchsverzeichnis ausgeben \\
+\end{befehle}
+\bsp{\textbackslash begin\{experiments\}\\
+\ \ \textbackslash V[Wellenwanne eben] Ebene Wellen \dots\\
+\textbackslash end\{experiments\}}
+
+\bereich{Verweise auf Versuche}
+\begin{befehle}
+\textbackslash Vref\{A\}         & V 3.2 \\
+\textbackslash Vref\{A, B\}      & V 3.2 und 3.4 \\
+\textbackslash Vref\{A, B, C\}   & V 3.2, 3.4 und 3.5 \\
+\textbackslash Vref*\{A\}        & Versuch 3.2 \\
+\textbackslash Vref*\{A, B\}     & Versuche 3.2 und 3.4 \\
+\textbackslash Vrefrange\{A\}\{B\}  & V 3.2 bis 3.5 \\
+\textbackslash Vrefrange*\{A\}\{B\} & Versuche 3.2 bis 3.5 \\
+\end{befehle}
+{\footnotesize A, B = Versuchsnamen \emph{ohne} \texttt{V:} und ohne Komma. Ein \texttt{V:} davor schadet nicht.
+\cs{ref}\{V:A\} gibt nur die Nummer aus, \cs{autoref}\{V:A\} ergibt \enquote{Versuch 3.2}.}
+
+\bereich{Bilder}
+\begin{befehle}
+\textbackslash begin\{Vbilder\}[0.45] & Bilder nebeneinander, Breite als Anteil der Zeile \\
+\lang{\textbackslash Vbild[\m{Optionen}]\{\m{Datei}\}}
+ & Optionen: \texttt{caption=}, \texttt{label=}, \texttt{width=} \\
+\lang{\textbackslash minicaption[\m{Label}]\{\m{Text}\}}
+ & Teilbild-Beschriftung in einer \texttt{minipage} \\
+\lang{\textbackslash minimaincaption\{\m{Text}\}}
+ & schließt die Teilbild-Gruppe ab \\
+\end{befehle}
+
+% ------------------------------------------------------------
+\bereich{Stundenverlauf}
+\begin{befehle}
+\lang{\textbackslash begin\{plan\}[\m{Titel}]}
+ & Tabelle mit eigenem \cs{section}, Standardtitel \enquote{Stundenverlauf} \\
+\textbackslash umbruch\{a \textbackslash\textbackslash\ b\} & Zeilenumbruch in einer Zelle \\
+\end{befehle}
+\bsp{\textbackslash begin\{plan\}\\
+\ \ 10' \& Thema \& Ausführung \& \textbackslash lsg \& Material \textbackslash\textbackslash\\
+\textbackslash end\{plan\}}
+\begin{befehle}
+\textbackslash lsg \ \textbackslash lv \ \textbackslash ea & L-S G. \ LV \ EA \\
+\textbackslash pa \ \textbackslash ga & PA \ GA \\
+\end{befehle}
+
+\bereich{Arbeitsblätter ins Skript einbinden}
+\begin{befehle}
+\textbackslash declarePath\{\m{Pfad}\} & in der Präambel, Ordner der Arbeitsblätter \\
+\textbackslash AB\{\m{Name}\} & bindet \m{Pfad}/\m{Name}/\m{Name}.pdf ein, Label \texttt{pdf:Name} \\
+\textbackslash AB[small] & 2 Seiten nebeneinander, quer, mit Rahmen \\
+\lang{\textbackslash AB[smalllandscape]}
+ & 2 Querseiten untereinander \\
+\textbackslash AB[landscape] & jede Seite quer \\
+\end{befehle}
+
+% ------------------------------------------------------------
+\bereich{Arbeitsblatt / Klassenarbeit}
+\begin{befehle}
+\lang{\textbackslash newcommand\{\textbackslash Datum\}\{\dots\}}
+ & muss vor \cs{header} definiert sein \\
+\lang{\textbackslash header\{\m{Min}\}\{\m{Hilfsmittel}\}}
+ & Kopf: Bearbeitungszeit, Hilfsmittel, Datum \\
+\lang{\textbackslash begin\{Aufgabe\}[\m{Punkte}]}
+ & \enquote{Aufgabe n}, Punkte am Rand, werden summiert \\
+\textbackslash teilaufgabe\{\m{Text}\} & a), b), c), \dots \\
+\textbackslash solution\{\m{Lösung}\} & in der Aufgabe: Lösung speichern \\
+\textbackslash printsols & alle Lösungen ausgeben \\
+\textbackslash printsols[2] & Lösung zu Aufgabe 2 \\
+\textbackslash printsols[last] & Lösung der letzten Aufgabe \\
+\textbackslash grid & Karoraster bis Seitenende \\
+\textbackslash grid[\m{cm}] & Karoraster mit Höhe in cm \\
+\textbackslash Ende & \enquote{Viel Erfolg!} + Punkte/Note \\
+\textbackslash Punkte & Gesamtpunktzahl bisher \\
+\end{befehle}
+\bsp{\textbackslash begin\{Aufgabe\}[4]\\
+\ \ \textbackslash teilaufgabe\{Berechne \dots\}\\
+\ \ \textbackslash teilaufgabe\{Begründe \dots\}\\
+\ \ \textbackslash solution\{\textbackslash teilaufgabe\{\dots\} \textbackslash teilaufgabe\{\dots\}\}\\
+\textbackslash end\{Aufgabe\}\\
+\textbackslash grid[6]\ \dots\ \textbackslash Ende \ \textbackslash newpage \ \textbackslash printsols}
+
+\end{multicols}
+\end{document}

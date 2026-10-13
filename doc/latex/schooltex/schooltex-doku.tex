@@ -1,0 +1,498 @@
+\documentclass[a4paper,11pt,parskip=half]{scrartcl}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[ngerman]{babel}
+\usepackage{csquotes}
+\usepackage{amsmath}
+\usepackage[top=22mm,bottom=25mm,left=25mm,right=25mm]{geometry}
+\usepackage[dvipsnames,svgnames,x11names]{xcolor}
+\usepackage{hyperref}
+\usepackage[per-mode=fraction]{siunitx}
+\usepackage{enumitem}
+\usepackage{subcaption}
+\sisetup{locale = DE}
+\usepackage{schooltex}
+
+\hypersetup{colorlinks, linkcolor=blue!50!black, urlcolor=blue!50!black}
+\setlength{\parindent}{0pt}
+
+% ------------------------------------------------------------
+% Hilfsmittel nur für diese Dokumentation
+% ------------------------------------------------------------
+\tcbuselibrary{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+  literate={ä}{{\"a}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+           {Ä}{{\"A}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1 {ß}{{\ss}}1
+           {’}{{'}}1,
+}
+
+% Ergebnis-Teil: \section wird zu \minisec, Tabellen/Raster passen in die Box
+\tcbset{
+  doku/.style={
+    enhanced, breakable,
+    colback=white, colframe=black!30, colbacklower=white,
+    arc=1mm, boxrule=0.4pt,
+    fonttitle=\bfseries\small, coltitle=black, colbacktitle=black!8,
+    listing options={language={[LaTeX]TeX}, texcsstyle=*\color{blue!60!black}},
+    before lower={\let\section\minisec\setlength{\textwidth}{\linewidth}},
+    segmentation style={black!30, solid},
+  },
+}
+\newtcblisting{beispiel}{doku, listing above text, title={Beispiel}}
+\newtcblisting{beispielseite}{doku, listing side text, title={Beispiel}}
+\newtcblisting{code}{doku, listing only, title={Code}}
+
+\newcommand{\cs}[1]{\texttt{\textbackslash #1}}
+\newcommand{\env}[1]{\texttt{#1}}
+\newcommand{\marg}[1]{\texttt{\{}\meta{#1}\texttt{\}}}
+\newcommand{\oarg}[1]{\texttt{[}\meta{#1}\texttt{]}}
+\newcommand{\meta}[1]{\ensuremath{\langle}\textit{#1}\ensuremath{\rangle}}
+
+\NewDocumentEnvironment{befehl}{m}
+  {\begin{tcolorbox}[colback=black!6, colframe=black!6, boxrule=0pt, sharp corners,
+     left=2mm, right=2mm, top=1mm, bottom=1mm, before skip=6pt, after skip=6pt,
+     fontupper=\ttfamily\small]
+   #1
+   \end{tcolorbox}}
+  {}
+
+\newcommand{\hinweis}[1]{%
+  \begin{tcolorbox}[colback=orange!6, colframe=orange!60!black, boxrule=0.4pt, arc=1mm,
+    left=2mm, right=2mm, top=1mm, bottom=1mm]
+    \small\textbf{Hinweis:} #1
+  \end{tcolorbox}}
+
+\title{Das Paket \texttt{schooltex}}
+\subtitle{Dokumentation}
+\author{Paul Baier}
+\date{Stand: Oktober 2026}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+% ============================================================
+\section{Überblick}
+% ============================================================
+
+\texttt{schooltex} bündelt Befehle und Umgebungen für den Schulalltag in zwei Bereichen:
+
+\begin{itemize}
+  \item \textbf{Unterrichtsskripte}: Gliederung, Tafelbilder, Versuchslisten mit
+        Versuchsverzeichnis und Verweisen, Stundenverläufe und das Einbinden von Arbeitsblättern.
+  \item \textbf{Arbeitsblätter und Klassenarbeiten}: Kopf, Aufgaben mit Punkten
+        und automatischer Gesamtpunktzahl, Teilaufgaben, gesammelte Lösungen, Karoraster und
+        Schlussblock.
+\end{itemize}
+
+Das Paket ist auf Deutsch ausgelegt. Die Ausgabetexte (\enquote{Aufgabe}, \enquote{Versuch},
+\enquote{Viel Erfolg!}, \dots) sind fest eingebaut.
+
+\subsection{Installation}
+
+Das Repository wird direkt als persönlicher TeX-Baum geklont, also \emph{ohne} eigenen Projektordner:
+\begin{code}
+cd ~/texmf
+git clone git@github.com:Ithu123/schooltex.git .
+\end{code}
+Danach findet \LaTeX{} das Paket ohne weitere Einstellungen. Die Icons in
+\texttt{tex/latex/Icons} werden ebenfalls automatisch gefunden.
+
+\subsection{Laden und Voraussetzungen}
+
+\begin{code}
+\documentclass{scrartcl}        % oder scrbook, scrreprt
+\usepackage[ngerman]{babel}
+\usepackage{csquotes}
+\usepackage[bottom=2.5cm, top=22mm, right=2.5cm]{geometry}
+\usepackage{hyperref}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage{subcaption}
+\usepackage{xcolor}
+\usepackage{schooltex}
+\end{code}
+
+\texttt{schooltex} lädt selbst unter anderem \texttt{tikz}/\texttt{pgfplots},
+\texttt{tabularray}, \texttt{tcolorbox}, \texttt{pdfpages}, \texttt{graphicx}, \texttt{soul},
+\texttt{caption}, \texttt{marginnote}, \texttt{xparse} und \texttt{cleveref}.
+Einige Befehle setzen außerdem voraus, dass das Dokument Folgendes bereitstellt:
+
+\begin{center}
+\begin{tblr}{colspec={Q[l] X[l]}, hlines, row{1}={bg=black!8, font=\bfseries}}
+  Voraussetzung & benötigt für \\
+  KOMA-Klasse (\texttt{scrartcl}, \texttt{scrbook}, \dots) &
+    Versuchsverzeichnis (\cs{DeclareNewTOC}), \cs{teilaufgabe} (\texttt{addmargin}) \\
+  \texttt{enumitem} & Umgebung \env{experiments} \\
+  \texttt{hyperref} & klickbare Verweise mit \cs{Vref} (ohne geht es auch, dann ohne Link) \\
+  \texttt{siunitx} & \cs{header} (Einheit Minuten) \\
+  \texttt{subcaption} & \cs{minicaption} \\
+  \texttt{geometry} mit Rand & Punkte und Symbole am Rand bei \env{Aufgabe} \\
+  \cs{Datum} & \cs{header} (muss im Dokument definiert werden) \\
+  \cs{declarePath} & \cs{AB} \\
+\end{tblr}
+\end{center}
+
+% ============================================================
+\section{Unterrichtsskripte}
+% ============================================================
+
+\subsection{Gliederung: \cs{kap}, \cs{uber}, \cs{uuber}}
+
+Drei eigene Gliederungsebenen mit unterstrichenen Überschriften, unabhängig von
+\cs{section} \& Co. Die Sternform setzt die Überschrift ohne Nummer. Die Zähler hängen
+voneinander ab: Ein neues \cs{kap} setzt \cs{uber} zurück usw.
+
+\begin{befehl}{\textbackslash kap\{Titel\} \quad \textbackslash uber\{Titel\} \quad \textbackslash uuber\{Titel\} \quad \textit{jeweils auch mit} *}\end{befehl}
+
+\begin{beispielseite}
+\kap{Mechanik}
+\uber{Kräfte}
+\uuber{Gewichtskraft}
+Text ohne Einzug.
+
+\uber*{Ohne Nummer}
+\end{beispielseite}
+
+\subsection{Tafelbild: \cs{tafel}}
+
+Eine grün beschriftete Box für den Tafelanschrieb. Sie darf über Seiten umbrechen
+und Absätze enthalten.
+
+\begin{befehl}{\textbackslash tafel\{Inhalt\}}\end{befehl}
+
+\begin{beispiel}
+\tafel{
+  \textbf{Wellenlänge} $\lambda$: Abstand zweier benachbarter
+  Punkte gleicher Phase.
+
+  $c = \lambda \cdot f$
+}
+\end{beispiel}
+
+\subsection{Versuche}
+
+\subsubsection*{Umgebung \env{experiments} und \cs{V}}
+
+Versuche werden in der Umgebung \env{experiments} gesammelt. Jeder \cs{V} beginnt einen
+neuen, automatisch nummerierten Versuch (\enquote{V \meta{Abschnitt}.\meta{Nr}}).
+Der Zähler beginnt in jedem \cs{section} neu.
+
+\begin{befehl}{\textbackslash begin\{experiments\}[Überschrift] \dots\ \textbackslash end\{experiments\}\\
+\textbackslash V \quad \textit{oder} \quad \textbackslash V[Name]}\end{befehl}
+
+Mit einem \meta{Name} passiert dreierlei:
+\begin{itemize}
+  \item Der Name erscheint hinter der Nummer.
+  \item Es wird das Label \texttt{V:\meta{Name}} gesetzt (für Verweise, siehe unten).
+  \item Der Versuch landet im Versuchsverzeichnis.
+\end{itemize}
+Die Überschrift ist optional, Standard ist \enquote{Versuche}.
+
+Zusätzlich gibt es zwei Hilfsbefehle für die Liste:
+\begin{itemize}
+  \item \cs{Vtext}\marg{Text} setzt einen Absatz ohne Nummer, etwa einen Hinweis zwischen zwei Versuchen.
+  \item \cs{Vgroup}\marg{Titel} setzt eine blaue Zwischenüberschrift mit Linie, um Versuche zu gruppieren.
+\end{itemize}
+
+\begin{beispiel}
+\begin{experiments}
+  \Vgroup{Wellenwanne}
+  \V[Wellenwanne eben] Ebene Wellen mit dem Linealerreger.
+  \V[Wellenwanne Kreis] Kreiswellen mit dem Punkterreger.
+  \Vtext{Beide Versuche am besten mit Stroboskop.}
+  \V[Wellenwanne Spalt] Beugung am Spalt.
+  \V Ein Versuch ohne Namen (kein Label, kein Eintrag im Verzeichnis).
+\end{experiments}
+\end{beispiel}
+
+\subsubsection*{Verweise: \cs{Vref} und \cs{Vrefrange}}
+
+Verweise nutzen den \emph{Namen} des Versuchs, das Präfix \texttt{V:} wird automatisch
+ergänzt. Mehrere Versuche werden durch Kommas getrennt. Die Sternform schreibt
+\enquote{Versuch} bzw.\ \enquote{Versuche} aus. Mit \texttt{hyperref} ist der ganze Verweis ein Link.
+
+\begin{befehl}{\textbackslash Vref\{Name\} \quad \textbackslash Vref\{Name1, Name2, \dots\} \quad \textbackslash Vref*\{\dots\}\\
+\textbackslash Vrefrange\{erster Name\}\{letzter Name\} \quad \textbackslash Vrefrange*\{\dots\}\{\dots\}}\end{befehl}
+
+\begin{beispielseite}
+\Vref{Wellenwanne eben}
+
+\Vref*{Wellenwanne eben}
+
+\Vref{Wellenwanne eben, Wellenwanne Spalt}
+
+\Vref*{Wellenwanne eben, Wellenwanne Kreis, Wellenwanne Spalt}
+
+\Vrefrange{Wellenwanne eben}{Wellenwanne Spalt}
+
+\Vrefrange*{Wellenwanne eben}{Wellenwanne Spalt}
+\end{beispielseite}
+
+\hinweis{Weil das Komma Versuche trennt, darf ein Versuchsname selbst kein Komma enthalten.
+Die alte Schreibweise \cs{Vref}\texttt{\{V:Name\}} funktioniert weiterhin.
+Ein \cs{ref}\texttt{\{V:Name\}} gibt nur die Nummer aus, \cs{autoref}\texttt{\{V:Name\}} ergibt
+\enquote{Versuch \meta{Nr}}.}
+
+\subsubsection*{Versuchsverzeichnis}
+
+Alle benannten Versuche werden gesammelt und mit \cs{listoftoc}\texttt{\{loe\}} ausgegeben,
+typischerweise am Ende des Skripts:
+
+\begin{beispiel}
+\listoftoc*{loe}
+\end{beispiel}
+(\cs{listoftoc*} setzt die Liste ohne eigene Überschrift; ohne Stern erscheint \enquote{Versuchsverzeichnis}.)
+
+\subsubsection*{Bilder zu Versuchen: \env{Vbilder} und \cs{Vbild}}
+
+Mehrere Bilder nebeneinander, jedes in einer eigenen \texttt{minipage}. Das optionale Argument
+von \env{Vbilder} ist die Standardbreite als Bruchteil der Zeilenbreite (Standard \texttt{0.45}).
+
+\begin{befehl}{\textbackslash begin\{Vbilder\}[Breitenfaktor] \dots\ \textbackslash end\{Vbilder\}\\
+\textbackslash Vbild[caption=\dots, label=\dots, width=\dots]\{Bilddatei\}}\end{befehl}
+
+\begin{beispiel}
+\begin{Vbilder}[0.3]
+  \Vbild[caption={Aufbau}, label={fig:aufbau}]{example-image-a}
+  \Vbild[caption={Messung}]{example-image-b}
+  \Vbild[caption={Breiter}, width=0.35\linewidth]{example-image-c}
+\end{Vbilder}
+\end{beispiel}
+
+\subsection{Teilbilder ohne Gleitumgebung: \cs{minicaption}}
+
+Für Teilbilder in \texttt{minipage}s, ohne \env{figure}. Jedes Teilbild bekommt
+\cs{minicaption}\oarg{Label}\marg{Text}, die Gruppe wird mit \cs{minimaincaption}\marg{Text}
+abgeschlossen. Erst dieser Befehl setzt die Hauptbeschriftung und den Eintrag im Abbildungsverzeichnis.
+
+\begin{beispiel}
+\begin{center}
+  \begin{minipage}{0.4\linewidth}\centering
+    \includegraphics[width=\linewidth]{example-image-a}
+    \minicaption[fig:links]{Linkes Teilbild}
+  \end{minipage}\hfill
+  \begin{minipage}{0.4\linewidth}\centering
+    \includegraphics[width=\linewidth]{example-image-b}
+    \minicaption{Rechtes Teilbild}
+  \end{minipage}
+  \minimaincaption{Zwei Teilbilder}
+\end{center}
+Siehe \ref{fig:links}.
+\end{beispiel}
+
+\subsection{Stundenverlauf: \env{plan}}
+
+Eine fünfspaltige \texttt{tblr}-Tabelle mit den Spalten Zeit, Thema, Ausführung/Plan, Methode und
+Medien/Material. Die Umgebung beginnt mit einem eigenen \cs{section}. Dessen Titel ist das optionale
+Argument, Standard ist \enquote{Stundenverlauf}. Jede Zeile endet mit \verb|\\|.
+
+\begin{befehl}{\textbackslash begin\{plan\}[Titel] Zeit \& Thema \& Ausführung \& Methode \& Material \textbackslash\textbackslash\ \dots\ \textbackslash end\{plan\}}\end{befehl}
+
+Für die Methodenspalte gibt es Kürzel:
+
+\begin{center}
+\begin{tblr}{colspec={Q[l] Q[l] Q[l] Q[l] Q[l]}, hlines, row{1}={font=\ttfamily}}
+  \textbackslash lsg & \textbackslash lv & \textbackslash ea & \textbackslash pa & \textbackslash ga \\
+  \lsg & \lv & \ea & \pa & \ga \\
+\end{tblr}
+\end{center}
+
+Mit \cs{umbruch}\marg{Zeile 1 \textbackslash\textbackslash\ Zeile 2} lassen sich Zeilenumbrüche
+innerhalb einer Zelle erzwingen.
+
+\begin{beispiel}
+\begin{plan}
+  10' & Einstieg & Schülerlaola, Frage nach dem Zusammenhang von
+        $f$ und $\lambda$ & \lsg & \Vref{Wellenwanne eben} \\
+  20' & Wellenfronten & Tafelaufschrieb anhand der Experimente
+        & \umbruch{Demo \\ \pa} & \Vrefrange{Wellenwanne eben}{Wellenwanne Spalt} \\
+\end{plan}
+\end{beispiel}
+
+\subsection{Arbeitsblätter einbinden: \cs{declarePath} und \cs{AB}}
+
+\cs{AB} bindet das PDF eines Arbeitsblatts ins Skript ein und erzeugt einen Eintrag im
+Inhaltsverzeichnis sowie das Label \texttt{pdf:\meta{Name}}. Erwartet wird die Ordnerstruktur
+\texttt{\meta{Pfad}/\meta{Name}/\meta{Name}.pdf}, so wie sie beim Übersetzen eines Arbeitsblatts entsteht.
+Den Pfad legt man einmal in der Präambel mit \cs{declarePath} fest.
+
+\begin{befehl}{\textbackslash declarePath\{Pfad\} \\ \textbackslash AB[Modus]\{Name\}}\end{befehl}
+
+\begin{center}
+\begin{tblr}{colspec={Q[l] X[l]}, hlines, row{1}={bg=black!8, font=\bfseries}}
+  Modus & Wirkung \\
+  \texttt{default} (ohne Angabe) & jede Seite des PDFs als eigene Seite \\
+  \texttt{small} & zwei Seiten verkleinert nebeneinander auf einer Querformatseite, mit Rahmen \\
+  \texttt{smalllandscape} & zwei Querformatseiten verkleinert untereinander, mit Rahmen \\
+  \texttt{landscape} & jede Seite im Querformat \\
+\end{tblr}
+\end{center}
+
+\begin{code}
+% Präambel
+\declarePath{../../../Arbeitsblaetter/Physik/KlasseKS}
+% im Text
+\AB{KSUebung2DInferferenz}
+\AB[small]{KSUebung2DInferferenz}
+Siehe Arbeitsblatt auf Seite \pageref{pdf:KSUebung2DInferferenz}.
+\end{code}
+
+% ============================================================
+\section{Arbeitsblätter und Klassenarbeiten}
+% ============================================================
+
+\subsection{Kopf: \cs{header}}
+
+Graue Kopfzeile mit Bearbeitungszeit, Hilfsmitteln und Datum. Das Datum kommt aus dem Befehl
+\cs{Datum}, den das Dokument selbst definieren muss.
+
+\begin{befehl}{\textbackslash header\{Minuten\}\{Hilfsmittel\}}\end{befehl}
+
+\begin{beispiel}
+\newcommand{\Datum}{15.07.26}
+\header{45}{Taschenrechner, Formelsammlung}
+\end{beispiel}
+
+\subsection{Aufgaben: \env{Aufgabe}}
+
+\begin{befehl}{\textbackslash begin\{Aufgabe\}[Punkte] \dots\ \textbackslash end\{Aufgabe\}}\end{befehl}
+
+Setzt die Überschrift \enquote{Aufgabe \meta{Nr}} mit fortlaufender Nummer.
+Im Seitenrand erscheint links ein Symbol für \enquote{schriftlich}.
+Werden \meta{Punkte} angegeben, steht rechts außerdem \enquote{\rule{0.8cm}{0.5pt}/\meta{Punkte}}.
+Dezimalpunkte wie \texttt{3.5} sind erlaubt. Alle Punkte werden automatisch zur Gesamtpunktzahl
+\cs{Punkte} aufsummiert.
+
+\begin{code}
+\begin{Aufgabe}[4]
+  Benenne die drei Newtonschen Axiome und erkläre eines davon.
+\end{Aufgabe}
+
+\begin{Aufgabe}[3.5]
+  Berechne die Gewichtskraft eines Körpers mit $m = \SI{2}{kg}$.
+\end{Aufgabe}
+\end{code}
+
+\hinweis{Die Umgebung hat noch ein zweites optionales Argument für andere Randsymbole
+(Taschenrechner, ohne Taschenrechner, Sterne für Niveaustufen). Diese Auswahl funktioniert
+derzeit nicht: Jeder Wert außer \texttt{0} führt zu einem Fehler. Ältere Dokumente definieren dafür noch
+\cs{schriftlich}, \cs{mitTR}, \cs{ohneTR}, \cs{einS}, \cs{zweiS} und \cs{dreiS}.}
+
+\subsection{Teilaufgaben: \cs{teilaufgabe}}
+
+Nummeriert mit a), b), c), \dots\ und leicht eingerückt. Die Zählung beginnt in jeder Aufgabe
+und in jeder Lösung neu.
+
+\begin{befehl}{\textbackslash teilaufgabe\{Text\}}\end{befehl}
+
+\begin{beispiel}
+\teilaufgabe{Berechne den Gangunterschied $\delta$.}
+\teilaufgabe{Entscheide, ob konstruktive oder destruktive Interferenz vorliegt.}
+\end{beispiel}
+
+\subsection{Lösungen: \cs{solution} und \cs{printsols}}
+
+\cs{solution} steht \emph{innerhalb} einer Aufgabe und speichert ihre Lösung, ohne sie auszugeben.
+Die Lösung darf Absätze und Teilaufgaben enthalten. Mit \cs{printsols} werden die gespeicherten
+Lösungen später ausgegeben, meist am Dokumentende oder auf einer eigenen Seite.
+
+\begin{befehl}{\textbackslash solution\{Lösung\} \\
+\textbackslash printsols \quad \textbackslash printsols[Nummer] \quad \textbackslash printsols[last]}\end{befehl}
+
+\begin{itemize}
+  \item \cs{printsols} gibt alle Lösungen aus.
+  \item \cs{printsols}\texttt{[2]} gibt nur die Lösung zu Aufgabe 2 aus.
+  \item \cs{printsols}\texttt{[last]} gibt nur die Lösung zur zuletzt gesetzten Aufgabe aus,
+        praktisch direkt nach der Aufgabe.
+\end{itemize}
+
+\begin{code}
+\begin{Aufgabe}[2]
+  \teilaufgabe{Nenne die Formel für die Wellengeschwindigkeit.}
+  \teilaufgabe{Berechne $c$ für $\lambda = \SI{2}{m}$ und $f = \SI{5}{Hz}$.}
+  \solution{
+    \teilaufgabe{$c = \lambda \cdot f$}
+    \teilaufgabe{$c = \SI{2}{m} \cdot \SI{5}{Hz} = \SI{10}{m/s}$}
+  }
+\end{Aufgabe}
+...
+\newpage
+\printsols
+\end{code}
+
+\subsection{Karoraster: \cs{grid}}
+
+Ein \SI{0,5}{cm}-Karoraster über die volle Breite in ganzen Zentimetern. Ohne Argument füllt
+das Raster den Rest der Seite, mit Argument hat es die angegebene Höhe in Zentimetern.
+
+\begin{befehl}{\textbackslash grid \quad \textbackslash grid[Höhe in cm]}\end{befehl}
+
+\begin{beispiel}
+\grid[2]
+\end{beispiel}
+
+\subsection{Schluss: \cs{Ende}}
+
+Setzt \enquote{Viel Erfolg!} und eine Tabelle für Gesamtpunktzahl, Note und Note in Worten.
+Die Gesamtpunktzahl \cs{Punkte} wird automatisch aus allen Aufgaben summiert. Da sie beim
+Durchlauf berechnet wird, muss \cs{Ende} \emph{nach} den Aufgaben stehen.
+
+\begin{beispiel}
+\Ende
+\end{beispiel}
+(Im Beispiel steht \enquote{0}, weil diese Dokumentation keine Aufgaben mit Punkten setzt.)
+
+\subsection{Gerüst einer Klassenarbeit}
+
+\begin{code}
+\documentclass[a4paper]{scrartcl}
+\input{Prambel/Prambel}
+\newcommand{\Datum}{15.07.26}
+
+\begin{document}
+\header{60}{Taschenrechner}
+
+\begin{Aufgabe}[4]
+  Benenne die drei Newtonschen Axiome und erkläre eines davon.
+  \solution{...}
+\end{Aufgabe}
+\grid
+
+\begin{Aufgabe}[6]
+  \teilaufgabe{...}
+  \teilaufgabe{...}
+  \solution{\teilaufgabe{...} \teilaufgabe{...}}
+\end{Aufgabe}
+\grid[8]
+
+\Ende
+
+\newpage
+\printsols
+\end{document}
+\end{code}
+
+% ============================================================
+\section{Weitere Befehle}
+% ============================================================
+
+\begin{center}
+\begin{tblr}{colspec={Q[l,font=\ttfamily] X[l]}, hlines, row{1}={bg=black!8, font=\bfseries}}
+  {\normalfont Befehl} & Bedeutung \\
+  \textbackslash Punkte & aktuelle Gesamtpunktzahl aller bisherigen Aufgaben \\
+  \textbackslash Path & der mit \cs{declarePath} gesetzte Pfad \\
+  \textbackslash Vbildbreite & Länge: Standardbreite von \cs{Vbild} (wird von \env{Vbilder} gesetzt) \\
+  \textbackslash getpagetotal, \textbackslash gettextheight & interne Hilfsbefehle für \cs{grid} \\
+  Zähler kap, unterkap, unterunterkap & Zähler für \cs{kap}, \cs{uber}, \cs{uuber} \\
+  Zähler experiment & Versuchszähler, \cs{theexperiment} $=$ \meta{Abschnitt}.\meta{Nr} \\
+  Zähler Aufgabe, TA & Aufgaben- und Teilaufgabenzähler \\
+\end{tblr}
+\end{center}
+
+\end{document}

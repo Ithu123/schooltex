@@ -194,9 +194,84 @@
 ]{tocline}{experiments}
 
 
-\NewDocumentCommand{\Vref}{m}{%
-  Versuch \ref{#1} (#1)%
-}
+% --- Verweise auf Versuche ---
+% Das Präfix "V:" des Labels wird automatisch ergänzt (ein vorhandenes "V:" ist erlaubt).
+%   \Vref{Wellenwanne eben}                 -> V 3.2
+%   \Vref{Wellenwanne eben, Schülerlaola}   -> V 3.2 und 3.7
+%   \Vref*{Wellenwanne eben}                -> Versuch 3.2   (Mehrzahl: Versuche 3.2 und 3.7)
+%   \Vrefrange{Wellenwanne eben}{Wellenwanne Spalt}  -> V 3.2 bis 3.5   (\Vrefrange* ausgeschrieben)
+% Versuchsnamen dürfen deshalb kein Komma enthalten.
+\ExplSyntaxOn
+\tl_new:N \l__school_vref_tl
+\seq_new:N \l__school_vref_in_seq
+\seq_new:N \l__school_vref_out_seq
+
+% #1 = Versuchsname (oder Label)  ->  #2 = Label "V:Name"
+\cs_new_protected:Npn \__school_vref_label:nN #1#2
+  {
+    \tl_set:Nn #2 {#1}
+    \tl_trim_spaces:N #2
+    \regex_replace_once:nnN { \A V: } { } #2
+    \tl_put_left:Nn #2 { V: }
+  }
+
+% #1 = Text vor der Nummer (Teil des Links), #2 = Label
+\cs_new_protected:Npn \__school_vref_link:nn #1#2
+  {
+    \cs_if_exist:NTF \hyperref
+      { \hyperref [#2] { #1 \ref* {#2} } }
+      { #1 \ref {#2} }
+  }
+
+% #1 = Präfix Einzahl, #2 = Präfix Mehrzahl, #3 = kommagetrennte Versuchsnamen
+\cs_new_protected:Npn \__school_vref:nnn #1#2#3
+  {
+    \seq_set_from_clist:Nn \l__school_vref_in_seq {#3}
+    \seq_clear:N \l__school_vref_out_seq
+    \seq_map_indexed_inline:Nn \l__school_vref_in_seq
+      {
+        \__school_vref_label:nN {##2} \l__school_vref_tl
+        \seq_put_right:Nx \l__school_vref_out_seq
+          {
+            \exp_not:N \__school_vref_link:nn
+              {
+                \int_compare:nNnT {##1} = { 1 }
+                  {
+                    \int_compare:nNnTF { \seq_count:N \l__school_vref_in_seq } > { 1 }
+                      { \exp_not:n {#2} }
+                      { \exp_not:n {#1} }
+                  }
+              }
+              { \exp_not:V \l__school_vref_tl }
+          }
+      }
+    \seq_use:Nnnn \l__school_vref_out_seq { ~und~ } { ,~ } { ~und~ }
+  }
+
+% #1 = Präfix, #2 = erster Versuch, #3 = letzter Versuch
+\cs_new_protected:Npn \__school_vrefrange:nnn #1#2#3
+  {
+    \__school_vref_label:nN {#2} \l__school_vref_tl
+    \exp_args:NnV \__school_vref_link:nn {#1} \l__school_vref_tl
+    \c_space_tl bis \c_space_tl
+    \__school_vref_label:nN {#3} \l__school_vref_tl
+    \exp_args:NnV \__school_vref_link:nn { } \l__school_vref_tl
+  }
+
+\NewDocumentCommand{\Vref}{s m}
+  {
+    \IfBooleanTF {#1}
+      { \__school_vref:nnn { Versuch~ } { Versuche~ } {#2} }
+      { \__school_vref:nnn { V\, } { V\, } {#2} }
+  }
+
+\NewDocumentCommand{\Vrefrange}{s m m}
+  {
+    \IfBooleanTF {#1}
+      { \__school_vrefrange:nnn { Versuche~ } {#2} {#3} }
+      { \__school_vrefrange:nnn { V\, } {#2} {#3} }
+  }
+\ExplSyntaxOff
 
 \NewDocumentCommand{\Vtext}{+m}{%
   \item[]\relax #1%

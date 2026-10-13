@@ -42,12 +42,32 @@
 }
 
 
-% Ein Befeh für subcation in den Minipages
-
+% Subfigure-Caption in Minipages (ohne figure-Float).
+% Erster \minicaption-Aufruf einer Gruppe zieht den figure-Counter vor,
+% damit \label die richtige Abbildungsnummer bekommt.
+% Abschluss der Gruppe: \minimaincaption{Text} statt \captionof{figure}{...}.
+%
+% Verwendung:
+%   \minicaption[label-key]{Text}   — Teilbild-Beschriftung (Label optional)
+%   \minimaincaption{Text}          — Hauptbeschriftung (setzt LOF-Eintrag)
 \makeatletter
-\providecommand{\minicaption}[1]{%
-    \def\@captype{subfigure}% Wir tricksen LaTeX lokal aus
-    \caption{#1}%            Nutzen die normale Subcaption
+\newif\if@minicapactive
+
+\newcommand{\minicaption}[2][]{%
+    \if@minicapactive\else
+        \stepcounter{figure}%           figure-Nummer vorziehen
+        \global\@minicapactivetrue
+    \fi
+    \def\@captype{subfigure}%
+    \caption{#2}%
+    \def\@tempa{#1}%
+    \ifx\@tempa\@empty\else\label{#1}\fi%
+}
+
+\newcommand{\minimaincaption}[1]{%
+    \addtocounter{figure}{-1}%          vorgezogenen Schritt rückgängig
+    \captionof{figure}{#1}%             zählt hoch + LOF-Eintrag
+    \global\@minicapactivefalse%        Flag für nächste Gruppe zurücksetzen
 }
 \makeatother
 % ----------------------------------

@@ -22,23 +22,42 @@
   mode .initial:n = default,
 }
 
+% Arbeitsblatt-Zähler: \ref{pdf:Name} liefert den Namen des ABs,
+% \cref{pdf:Name} "Arbeitsblatt Name".
+\newcounter{arbeitsblatt}
+\crefname{arbeitsblatt}{Arbeitsblatt}{Arbeitsblätter}
+\Crefname{arbeitsblatt}{Arbeitsblatt}{Arbeitsblätter}
+\providecommand{\theHarbeitsblatt}{\arabic{arbeitsblatt}}% eindeutige Hyperref-Anker
+
+% Label, Anker und TOC-Eintrag werden per pagecommand auf die erste
+% eingefügte Seite gesetzt (vor \includepdf landeten sie wegen dessen
+% \clearpage auf der Seite davor).
+\bool_new:N \g__school_ab_first_bool
+\cs_new_protected:Npn \__school_ab_mark:n #1
+{
+  \bool_if:NT \g__school_ab_first_bool
+  {
+    \bool_gset_false:N \g__school_ab_first_bool
+    \cs_set:Npn \thearbeitsblatt {#1}
+    \refstepcounter{arbeitsblatt}
+    \label{pdf:#1}
+    \addcontentsline{toc}{subsection}{#1}
+  }
+}
+
 \NewDocumentCommand{\AB}{ O{default} m }{
   \group_begin:
   % Jetzt versteht er [small] direkt
   \keys_set:nn { schooltex / AB } { #1 }
 
-  \phantomsection
-  \label{pdf:#2}
-
   \cs_if_exist:cTF { Path } {
+    \bool_gset_true:N \g__school_ab_first_bool
     \str_case:VnF \l_school_mode_tl {
-      { small }          { \includepdf[pages=-, nup=2x1, doublepages, landscape, frame]{\Path/#2/#2} }
-        { smalllandscape }  { \includepdf[pages=-, nup=1x2, doublepages, frame]{\Path/#2/#2} }
-        { landscape }       { \includepdf[pages=-, landscape]{\Path/#2/#2} }
+      { small }          { \includepdf[pages=-, nup=2x1, doublepages, landscape, frame, pagecommand={\__school_ab_mark:n {#2}}]{\Path/#2/#2} }
+        { smalllandscape }  { \includepdf[pages=-, nup=1x2, doublepages, frame, pagecommand={\__school_ab_mark:n {#2}}]{\Path/#2/#2} }
+        { landscape }       { \includepdf[pages=-, landscape, pagecommand={\__school_ab_mark:n {#2}}]{\Path/#2/#2} }
     }
-    { \includepdf[pages=-]{\Path/#2/#2} } % Default-Fall (F-Zweig von str_case)
-
-    \addcontentsline{toc}{subsection}{#2}
+    { \includepdf[pages=-, pagecommand={\__school_ab_mark:n {#2}}]{\Path/#2/#2} } % Default-Fall (F-Zweig von str_case)
   }{
     \PackageError{schooltex}{Path not set.}{Setze \string\Path.}
   }

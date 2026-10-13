@@ -318,7 +318,9 @@ innerhalb einer Zelle erzwingen.
 \subsection{Arbeitsblätter einbinden: \cs{declarePath} und \cs{AB}}
 
 \cs{AB} bindet das PDF eines Arbeitsblatts ins Skript ein und erzeugt einen Eintrag im
-Inhaltsverzeichnis sowie das Label \texttt{pdf:\meta{Name}}. Erwartet wird die Ordnerstruktur
+Inhaltsverzeichnis sowie das Label \texttt{pdf:\meta{Name}}. Label, Sprungziel und Eintrag im
+Inhaltsverzeichnis liegen auf der ersten Seite des Arbeitsblatts. \cs{ref} liefert den Namen des
+Arbeitsblatts, \cs{cref} zusätzlich das Wort \enquote{Arbeitsblatt}. Erwartet wird die Ordnerstruktur
 \texttt{\meta{Pfad}/\meta{Name}/\meta{Name}.pdf}, so wie sie beim Übersetzen eines Arbeitsblatts entsteht.
 Den Pfad legt man einmal in der Präambel mit \cs{declarePath} fest.
 
@@ -341,6 +343,8 @@ Den Pfad legt man einmal in der Präambel mit \cs{declarePath} fest.
 \AB{KSUebung2DInferferenz}
 \AB[small]{KSUebung2DInferferenz}
 Siehe Arbeitsblatt auf Seite \pageref{pdf:KSUebung2DInferferenz}.
+AB \ref{pdf:KSUebung2DInferferenz}    % -> AB KSUebung2DInferferenz
+\cref{pdf:KSUebung2DInferferenz}      % -> Arbeitsblatt KSUebung2DInferferenz
 \end{code}
 
 % ============================================================

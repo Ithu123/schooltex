@@ -40,8 +40,31 @@
 \newif\ifschooltex@memoize
 \schooltex@memoizetrue
 
-\DeclareOption{nomemoize}{\schooltex@memoizefalse}
-\ProcessOptions\relax
+% --- Optionen (key=value) ---
+%   nomemoize            memoize abschalten (nur beim Laden)
+%   punkte=erwartung     Standard: Teilpunkte \TP{...} erscheinen nur in der Lösung,
+%                        direkt hinter dem markierten Teil (Erwartungshorizont)
+%   punkte=inline        \TP{...} erscheint in der Aufgabe am Zeilenende, in der Lösung nicht
+%   punktfarbe=<Farbe>   Farbe der Teilpunkte (Standard: red)
+% \TP und die Kontrolle der Punktsummen stehen in sheetcommands.tex.
+% Alles außer nomemoize geht auch im Dokument: \schooltexset{punkte=inline}
+% (praktisch, weil die Präambel meist von mehreren Arbeiten geteilt wird)
+\ExplSyntaxOn
+\tl_new:N \g_schooltex_punkte_tl
+\tl_new:N \g_schooltex_punktfarbe_tl
+\keys_define:nn { schooltex }
+  {
+    nomemoize  .code:n     = { \schooltex@memoizefalse } ,
+    nomemoize  .usage:n    = load ,
+    punkte     .choices:nn = { erwartung , inline }
+      { \tl_gset_eq:NN \g_schooltex_punkte_tl \l_keys_choice_tl } ,
+    punkte     .initial:n  = erwartung ,
+    punktfarbe .tl_gset:N  = \g_schooltex_punktfarbe_tl ,
+    punktfarbe .initial:n  = red ,
+  }
+\NewDocumentCommand \schooltexset { m } { \keys_set:nn { schooltex } {#1} }
+\ExplSyntaxOff
+\ProcessKeyOptions[schooltex]
 \ifschooltex@memoize
   \RequirePackage[extract=python]{memoize}
   % tcolorbox zeichnet die Rahmen seiner Boxen (z. B. \tafel) selbst mit einem tikzpicture,

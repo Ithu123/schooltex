@@ -79,6 +79,7 @@
     \setlength{\AufgP}{#1 pt}  
     \setcounter{TA}{1}
     \refstepcounter{Aufgabe}
+    \schooltex@aufgabestart{#1}% Punkte merken, um die \TP-Punkte zu kontrollieren
 
     \ifdim\AufgP=0pt
         \relax
@@ -119,10 +120,184 @@
 \msg_new:nnn { schooltex } { inline-rerun }
   { Lösungen~werden~erst~nach~erneutem~Übersetzen~unter~den~Aufgaben~gedruckt. }
 
+% ------------------------------------------------------------
+% Teilpunkte: \TP{<Punkte>}
+% Darf beliebig oft und an beliebiger Stelle in einer Aufgabe oder ihrer
+% Lösung stehen. Sichtbar ist es
+%   - in der Aufgabe nur bei punkte=inline   (am Zeilenende)
+%   - in der Lösung  nur bei punkte=erwartung (direkt hinter dem markierten Teil)
+% Kontrolle gegen die Punkte von {Aufgabe} (nur wenn überhaupt \TP vorkommen):
+%   - Aufgabe: Summe beim Setzen, Vergleich bei \end{Aufgabe}.
+%     \TP in einer tabularray-Tabelle ist hier ein Fehler, weil tabularray
+%     Zellen mehrfach setzt und die Summe dann nicht stimmt.
+%   - Lösung: \solution zählt die \TP in seinem Quelltext, also auch in
+%     Tabellen, und vergleicht sofort (auch ohne \printsols).
+% Wer nur über {Aufgabe}[P] Punkte vergibt, bekommt keine Kontrolle und
+% keine Ausgabe; \Punkte und \Ende zählen wie bisher nur {Aufgabe}.
+% ------------------------------------------------------------
+\fp_new:N   \g_schooltex_tp_aufgabe_fp     % Summe der \TP in der Aufgabe
+\bool_new:N \g_schooltex_tp_aufgabe_bool   % kam in der Aufgabe ein \TP vor?
+\bool_new:N \g_schooltex_in_loesung_bool   % wird gerade eine Lösung gesetzt?
+\bool_new:N \g_schooltex_tp_tblr_bool      % Tabellenfehler in dieser Aufgabe schon gemeldet?
+\prop_new:N \g_schooltex_aufgpunkte_prop   % Aufgabennummer -> Punkte der Aufgabe
+\tl_new:N   \l_schooltex_tp_tl
+\fp_new:N   \l_schooltex_tp_loesung_fp
+\seq_new:N  \l_schooltex_tp_seq
+
+\msg_new:nnn { schooltex } { tp-aufgabe }
+  { Aufgabe~#1:~Die~\iow_char:N\\TP-Punkte~ergeben~#2,~die~Aufgabe~hat~aber~#3~Punkte. }
+\msg_new:nnn { schooltex } { tp-loesung }
+  { Lösung~zu~Aufgabe~#1:~Die~\iow_char:N\\TP-Punkte~ergeben~#2,~die~Aufgabe~hat~aber~#3~Punkte. }
+\msg_new:nnnn { schooltex } { tp-tabelle }
+  { \iow_char:N\\TP~in~einer~Tabelle~der~Aufgabe~#1~wird~nicht~unterstützt. }
+  { tabularray~setzt~Tabellenzellen~mehrfach,~die~Punkte~würden~falsch~gezählt.~
+    Setze~\iow_char:N\\TP~außerhalb~der~Tabelle.~In~\iow_char:N\\solution~sind~
+    \iow_char:N\\TP~in~Tabellen~erlaubt. }
+\msg_new:nnnn { schooltex } { tp-zahl }
+  { \iow_char:N\\TP\{#1\}~ist~keine~Punktzahl. }
+  { Erlaubt~sind~Zahlen~wie~2,~1.5~oder~1,5. }
+\msg_new:nnnn { schooltex } { tp-ausserhalb }
+  { \iow_char:N\\TP~steht~außerhalb~einer~Aufgabe~und~wird~nicht~gezählt. }
+  { \iow_char:N\\TP~gehört~in~eine~Umgebung~\{Aufgabe\}~oder~in~\iow_char:N\\solution. }
+
+\cs_generate_variant:Nn \prop_gput:Nnn { NVV }
+
+% Punktzahl als Zahl für l3fp (Dezimalkomma erlaubt)
+\cs_new_protected:Npn \schooltex_tp_set:n #1
+  {
+    \tl_set:Ne \l_schooltex_tp_tl { \tl_trim_spaces:n {#1} }
+    \tl_replace_all:Nnn \l_schooltex_tp_tl { , } { . }
+  }
+
+% Punktzahl formatiert (mit siunitx als 1,5) in der Punktfarbe
+\cs_new_protected:Npn \schooltex_tp_format:n #1
+  {
+    \mbox
+      {
+        \color { \g_schooltex_punktfarbe_tl }
+        ( \cs_if_exist:NTF \num { \num {#1} } {#1} \, P )
+      }
+  }
+
+% Wird zu Beginn jeder Aufgabe aufgerufen (aus der Umgebung {Aufgabe})
+\cs_new_protected:cpn { schooltex@aufgabestart } #1
+  {
+    \schooltex_tp_set:n {#1}
+    \tl_set:Ne \l_tmpb_tl { \arabic{Aufgabe} }
+    \tl_set:Ne \l_tmpa_tl { \fp_eval:n { \l_schooltex_tp_tl } }
+    \prop_gput:NVV \g_schooltex_aufgpunkte_prop \l_tmpb_tl \l_tmpa_tl
+    \fp_gzero:N \g_schooltex_tp_aufgabe_fp
+    \bool_gset_false:N \g_schooltex_tp_aufgabe_bool
+    \bool_gset_false:N \g_schooltex_tp_tblr_bool
+  }
+
+% Vergleich einer \TP-Summe #2 mit den Punkten der Aufgabe #1, Meldung #3
+\cs_new_protected:Npn \schooltex_tp_check:nNn #1 #2 #3
+  {
+    \tl_set:Ne \l_tmpb_tl {#1}
+    \prop_get:NVNTF \g_schooltex_aufgpunkte_prop \l_tmpb_tl \l_tmpa_tl
+      { \tl_set:Ne \l_tmpa_tl { \fp_eval:n { \l_tmpa_tl } } }
+      { \tl_set:Nn \l_tmpa_tl { 0 } }
+    \fp_compare:nNnF {#2} = { \l_tmpa_tl }
+      { \msg_warning:nneee { schooltex } {#3} { \l_tmpb_tl } { \fp_use:N #2 } { \l_tmpa_tl } }
+  }
+
+% Steht der Befehl gerade in einer tabularray-Tabelle?
+\prg_new_conditional:Npnn \schooltex_if_in_tblr: { T, F, TF }
+  {
+    \int_if_exist:NTF \gTblrLevelInt
+      {
+        \int_compare:nNnTF { \gTblrLevelInt } > { 0 }
+          { \prg_return_true: } { \prg_return_false: }
+      }
+      { \prg_return_false: }
+  }
+
+\NewDocumentCommand \TP { m }
+  {
+    \bool_if:NTF \g_schooltex_in_loesung_bool
+      {
+        % Lösung: gezählt wurde schon in \solution, hier nur anzeigen
+        \str_if_eq:VnTF \g_schooltex_punkte_tl { erwartung }
+          { \unskip \nobreak \hspace{0.4em} \schooltex_tp_format:n {#1} }
+          { \mode_if_horizontal:T { \unskip } }
+      }
+      {
+        \schooltex_if_in_tblr:TF
+          {
+            % nur einmal pro Aufgabe melden (tabularray setzt die Zelle mehrfach)
+            \bool_if:NF \g_schooltex_tp_tblr_bool
+              {
+                \bool_gset_true:N \g_schooltex_tp_tblr_bool
+                \msg_error:nne { schooltex } { tp-tabelle } { \arabic{Aufgabe} }
+              }
+          }
+          {
+            \bool_if:NTF \l_schooltex_in_aufgabe_bool
+              {
+                \regex_match:nnTF { \A \s* \d+ ([\.\,] \d+)? \s* \Z } {#1}
+                  {
+                    \schooltex_tp_set:n {#1}
+                    \fp_gadd:Nn \g_schooltex_tp_aufgabe_fp { \l_schooltex_tp_tl }
+                  }
+                  { \msg_error:nnn { schooltex } { tp-zahl } {#1} }
+                \bool_gset_true:N \g_schooltex_tp_aufgabe_bool
+              }
+              { \msg_warning:nn { schooltex } { tp-ausserhalb } }
+          }
+        \str_if_eq:VnTF \g_schooltex_punkte_tl { inline }
+          {
+            \unskip \nobreak \hfil \penalty 50 \hskip 1em \hbox{} \nobreak
+            \hfill \schooltex_tp_format:n {#1}
+          }
+          { \mode_if_horizontal:T { \unskip } }
+      }
+  }
+
+% Zählt alle \TP{...} im Quelltext einer Lösung (#1) und vergleicht mit der
+% Aufgabe, zu der die Lösung gespeichert wird. Kein \TP -> keine Kontrolle.
+\cs_new_protected:Npn \schooltex_tp_scan_loesung:n #1
+  {
+    \regex_extract_all:nnN { \c{TP} \s* \cB. (.*?) \cE. } {#1} \l_schooltex_tp_seq
+    \seq_if_empty:NF \l_schooltex_tp_seq
+      {
+        \fp_zero:N \l_schooltex_tp_loesung_fp
+        % Die Folge enthält abwechselnd den ganzen Treffer und die Punktzahl
+        \bool_set_false:N \l_tmpa_bool
+        \seq_map_inline:Nn \l_schooltex_tp_seq
+          {
+            \bool_if:NT \l_tmpa_bool
+              {
+                \regex_match:nnTF { \A \s* \d+ ([\.\,] \d+)? \s* \Z } {##1}
+                  {
+                    \schooltex_tp_set:n {##1}
+                    \fp_add:Nn \l_schooltex_tp_loesung_fp { \l_schooltex_tp_tl }
+                  }
+                  { \msg_error:nnn { schooltex } { tp-zahl } {##1} }
+              }
+            \bool_set_inverse:N \l_tmpa_bool
+          }
+        \schooltex_tp_check:nNn { \arabic{Aufgabe} } \l_schooltex_tp_loesung_fp { tp-loesung }
+      }
+  }
+
+% Gespeicherte Lösung (#1) setzen; \TP darin werden nur angezeigt
+\cs_new_protected:Npn \schooltex_loesung_print:n #1
+  {
+    \bool_gset_true:N \g_schooltex_in_loesung_bool
+    #1
+    \bool_gset_false:N \g_schooltex_in_loesung_bool
+  }
+
 \AddToHook { env/Aufgabe/begin }
   { \bool_set_true:N \l_schooltex_in_aufgabe_bool }
 \AddToHook { env/Aufgabe/end }
   {
+    \bool_if:NT \g_schooltex_tp_aufgabe_bool
+      {
+        \schooltex_tp_check:nNn { \arabic{Aufgabe} }
+          \g_schooltex_tp_aufgabe_fp { tp-aufgabe }
+      }
     \bool_if:NT \g_schooltex_sols_inline_bool
       { \schooltex_print_inline_sol: }
   }
@@ -135,6 +310,8 @@
   \tl_set:Nx \l_tmpa_tl { \arabic{Aufgabe} }
   % Wir speichern den Inhalt (#1), egal wie lang er ist
   \prop_gput:NVn \g_schooltex_solutions_prop \l_tmpa_tl { #1 }
+  % \TP-Punkte der Lösung zählen und mit der Aufgabe vergleichen
+  \schooltex_tp_scan_loesung:n {#1}
 
   \setcounter{TA}{1}
   % Steht \solution hinter \end{Aufgabe}, wird sofort gedruckt
@@ -156,7 +333,7 @@
             {
               \setcounter{TA}{1}
               \paragraph{Lösung~zu~Aufgabe~##1:}
-              ##2
+              \schooltex_loesung_print:n {##2}
             }
         }
     }
@@ -213,7 +390,7 @@
       {
         \setcounter{TA}{1}
         \paragraph{Lösung:}
-        \l_tmpa_tl
+        \exp_args:NV \schooltex_loesung_print:n \l_tmpa_tl
       }
   }
 
@@ -224,7 +401,7 @@
       {
         \setcounter{TA}{1}
         \paragraph{Lösung~zu~Aufgabe~#1:}
-        \l_tmpa_tl
+        \exp_args:NV \schooltex_loesung_print:n \l_tmpa_tl
       }
       { \paragraph{Fehler:}~Lösung~zu~Aufgabe~#1~nicht~gefunden. }
   }

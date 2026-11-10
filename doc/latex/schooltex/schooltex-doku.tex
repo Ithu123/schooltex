@@ -138,6 +138,24 @@ Einige Befehle setzen außerdem voraus, dass das Dokument Folgendes bereitstellt
 \end{tblr}
 \end{center}
 
+\subsection{Optionen}
+
+Optionen werden als \meta{Schlüssel}\texttt{=}\meta{Wert} angegeben, entweder beim Laden
+(\verb|\usepackage[punkte=inline]{schooltex}|) oder im Dokument mit \cs{schooltexset}. Weil die
+Präambel meist von mehreren Arbeiten geteilt wird, ist \cs{schooltexset} der übliche Weg.
+
+\begin{befehl}{\textbackslash schooltexset\{punkte=inline, punktfarbe=blue\}}\end{befehl}
+
+\begin{center}
+\begin{tblr}{colspec={Q[l,font=\ttfamily] X[l]}, hlines, row{1}={bg=black!8, font=\bfseries}}
+  {\normalfont Option} & Wirkung \\
+  punkte=erwartung & Standard. Teilpunkte \cs{TP} erscheinen nur im Erwartungshorizont (in den Lösungen). \\
+  punkte=inline & Teilpunkte \cs{TP} erscheinen am Zeilenende in der Aufgabe, in den Lösungen nicht. \\
+  punktfarbe=\meta{Farbe} & Farbe der Teilpunkte, Standard \texttt{red}. \\
+  nomemoize & TikZ-Bilder nicht zwischenspeichern. Nur beim Laden möglich. \\
+\end{tblr}
+\end{center}
+
 % ============================================================
 \section{Unterrichtsskripte}
 % ============================================================
@@ -435,6 +453,58 @@ Lösungen später ausgegeben, meist am Dokumentende oder auf einer eigenen Seite
 \newpage
 \printsols
 \end{code}
+
+\subsection{Teilpunkte: \cs{TP}}
+
+\cs{TP}\marg{Punkte} verteilt die Punkte einer Aufgabe auf einzelne Teile. Der Befehl darf
+beliebig oft und an beliebiger Stelle stehen, in der Aufgabe und in ihrer Lösung. Dezimalzahlen
+sind mit Punkt oder Komma erlaubt (\texttt{1.5} oder \texttt{1,5}), ausgegeben wird
+\enquote{(1,5\,P)} in der Punktfarbe.
+
+\begin{befehl}{\textbackslash TP\{Punkte\}}\end{befehl}
+
+Was sichtbar ist, bestimmt die Option \texttt{punkte}:
+\begin{itemize}
+  \item \texttt{punkte=erwartung} (Standard): In der Aufgabe sieht man nichts. In der Lösung
+        steht die Punktzahl direkt hinter dem Teil, für den es sie gibt. So markiert man im
+        Erwartungshorizont, was bewertet wird.
+  \item \texttt{punkte=inline}: In der Aufgabe steht die Punktzahl rechts am Zeilenende.
+        In der Lösung sieht man nichts.
+\end{itemize}
+Maßgeblich ist die Einstellung an der Stelle, an der etwas gesetzt wird. Für die Lösungen zählt
+also die Einstellung beim \cs{printsols}.
+
+\begin{code}
+\begin{Aufgabe}[5]
+  \teilaufgabe{Berechne den neuen Preis. \TP{2}}
+  \teilaufgabe{Begründe, dass Linas Aussage falsch ist. \TP{3}}
+  \solution{
+    \teilaufgabe{$120 \cdot 0{,}75 = 90$ \TP{1} Antwortsatz \TP{1}}
+    \teilaufgabe{$90 \cdot 1{,}25 = 112{,}50$ \TP{2}
+                 Grundwert hat sich geändert \TP{1}}
+  }
+\end{Aufgabe}
+\end{code}
+
+\paragraph{Kontrolle.} Kommt in einer Aufgabe oder in ihrer Lösung mindestens ein \cs{TP} vor,
+vergleicht \texttt{schooltex} die Summe mit den Punkten der Aufgabe und warnt, wenn sie nicht
+übereinstimmen, zum Beispiel
+\enquote{Lösung zu Aufgabe 3: Die \cs{TP}-Punkte ergeben 2, die Aufgabe hat aber 3 Punkte.}
+Aufgabe und Lösung werden getrennt geprüft. Wer Punkte nur über \env{Aufgabe}\oarg{Punkte}
+vergibt, bekommt weder eine Ausgabe noch eine Meldung. \cs{Punkte} und \cs{Ende} zählen
+weiterhin nur die Punkte der Aufgaben.
+
+\begin{itemize}
+  \item Die Lösung wird schon in \cs{solution} geprüft. Die Warnung kommt also auch dann,
+        wenn \cs{printsols} gar nicht im Dokument steht.
+  \item In der Lösung darf \cs{TP} auch in Tabellen stehen. In einer Tabelle der
+        \emph{Aufgabe} ist \cs{TP} ein Fehler: \texttt{tabularray} setzt Zellen mehrfach,
+        die Summe wäre falsch.
+  \item \cs{TP} außerhalb einer Aufgabe und ihrer Lösung wird nicht gezählt und gibt eine Warnung.
+  \item Steht in \cs{TP} keine Zahl, gibt es einen Fehler.
+  \item In der Lösung zählt nur, was im Quelltext von \cs{solution} steht. Ein \cs{TP}, das in
+        einem eigenen Befehl versteckt ist, wird dort nicht gefunden.
+\end{itemize}
 
 \subsection{Karoraster: \cs{grid}}
 

@@ -27,7 +27,7 @@
     \ifnum#1=0
     \reversemarginpar
     \newcommand{\markpara}{%
-    \marginnote{\includegraphics[height=8pt]{Icons/contract}}[0cm]
+    \marginnote{\includegraphics[height=8pt]{Icons/contract}}[0cm]%
     }% Kein Symbol
     \else\ifnum#1=1
         \def\marginsymbol{\llap{\includegraphics[height=8pt\markpara]{Icons/contract}\quad}}%
@@ -75,9 +75,9 @@
    
     % Hier beginnt die eigentliche Aufgabe
     \refstepcounter{AufgabeCounter}
-    \paragraph{Aufgabe\, \theAufgabe}\markpara 
+    \paragraph[Aufgabe\, \theAufgabe]{\markpara Aufgabe\, \theAufgabe}
     \setlength{\AufgP}{#1 pt}  
-    \setcounter{TA}{1} 
+    \setcounter{TA}{1}
     \refstepcounter{Aufgabe}
 
     \ifdim\AufgP=0pt
@@ -107,6 +107,26 @@
 % 1. Die Liste für die Lösungen anlegen
 \prop_new:N \g_schooltex_solutions_prop
 
+% Inline-Modus: Lösungen direkt unter der jeweiligen Aufgabe drucken
+\bool_new:N \g_schooltex_sols_inline_bool
+\bool_new:N \l_schooltex_in_aufgabe_bool
+
+% Wird aus der .aux-Datei aufgerufen, damit \printsols[inline] auch am
+% Dokumentende für alle Aufgaben wirkt (ab dem zweiten Übersetzen)
+\cs_new_protected:cpn { schooltex@solsinline }
+  { \bool_gset_true:N \g_schooltex_sols_inline_bool }
+
+\msg_new:nnn { schooltex } { inline-rerun }
+  { Lösungen~werden~erst~nach~erneutem~Übersetzen~unter~den~Aufgaben~gedruckt. }
+
+\AddToHook { env/Aufgabe/begin }
+  { \bool_set_true:N \l_schooltex_in_aufgabe_bool }
+\AddToHook { env/Aufgabe/end }
+  {
+    \bool_if:NT \g_schooltex_sols_inline_bool
+      { \schooltex_print_inline_sol: }
+  }
+
 % 2. Der Befehl zum Speichern (Sicher gegen Sonderzeichen)
 
 % Wir nutzen +m statt m, damit das Argument Absätze enthalten darf
@@ -115,33 +135,87 @@
   \tl_set:Nx \l_tmpa_tl { \arabic{Aufgabe} }
   % Wir speichern den Inhalt (#1), egal wie lang er ist
   \prop_gput:NVn \g_schooltex_solutions_prop \l_tmpa_tl { #1 }
-  
+
   \setcounter{TA}{1}
+  % Steht \solution hinter \end{Aufgabe}, wird sofort gedruckt
+  \bool_if:NT \g_schooltex_sols_inline_bool
+    {
+      \bool_if:NF \l_schooltex_in_aufgabe_bool
+        { \schooltex_print_inline_sol: }
+    }
 }
 % 3. Der Befehl zum Drucken
 \NewDocumentCommand{\printsols}{o}
 {
   \IfNoValueTF {#1}
     {
-      % Alle Lösungen drucken
-      \prop_map_inline:Nn \g_schooltex_solutions_prop
+      % Alle Lösungen drucken (im Inline-Modus stehen sie schon unter den Aufgaben)
+      \bool_if:NF \g_schooltex_sols_inline_bool
         {
-          \setcounter{TA}{1}
-          \paragraph{Lösung~zu~Aufgabe~##1:}
-          ##2
+          \prop_map_inline:Nn \g_schooltex_solutions_prop
+            {
+              \setcounter{TA}{1}
+              \paragraph{Lösung~zu~Aufgabe~##1:}
+              ##2
+            }
         }
     }
     {
-      \str_if_eq:nnTF {#1} {last}
-        { 
-          % Letzte Aufgabe: Wir holen uns erst die Nummer...
-          \tl_set:Nx \l_tmpa_tl { \arabic{Aufgabe} }
-          % ...und drucken sie
-          \schooltex_print_single_sol:V \l_tmpa_tl 
+      \str_case:nnF {#1}
+        {
+          { inline } { \schooltex_enable_inline: }
+          { last }
+            {
+              \bool_if:NF \g_schooltex_sols_inline_bool
+                {
+                  % Letzte Aufgabe: Wir holen uns erst die Nummer...
+                  \tl_set:Nx \l_tmpa_tl { \arabic{Aufgabe} }
+                  % ...und drucken sie
+                  \schooltex_print_single_sol:V \l_tmpa_tl
+                }
+            }
         }
-        { \schooltex_print_single_sol:n {#1} }
+        {
+          \bool_if:NF \g_schooltex_sols_inline_bool
+            { \schooltex_print_single_sol:n {#1} }
+        }
     }
 }
+
+% Inline-Modus einschalten und für den nächsten Lauf in der .aux merken
+\cs_new_protected:Npn \schooltex_enable_inline:
+  {
+    \bool_if:NF \g_schooltex_sols_inline_bool
+      {
+        \bool_gset_true:N \g_schooltex_sols_inline_bool
+        \bool_if:NF \l_schooltex_in_aufgabe_bool
+          {
+            \int_compare:nNnT { \value{Aufgabe} } > { 0 }
+              { \msg_warning:nn { schooltex } { inline-rerun } }
+          }
+      }
+    \AddToHook { begindocument }
+      {
+        \iow_now:cx { @auxout }
+          {
+            \token_to_str:N \providecommand
+            \token_to_str:c { schooltex@solsinline } {}
+            \token_to_str:c { schooltex@solsinline }
+          }
+      }
+  }
+
+% Lösung der aktuellen Aufgabe drucken, falls vorhanden (ohne Fehlermeldung)
+\cs_new_protected:Npn \schooltex_print_inline_sol:
+  {
+    \tl_set:Nx \l_tmpb_tl { \arabic{Aufgabe} }
+    \prop_get:NVNT \g_schooltex_solutions_prop \l_tmpb_tl \l_tmpa_tl
+      {
+        \setcounter{TA}{1}
+        \paragraph{Lösung:}
+        \l_tmpa_tl
+      }
+  }
 
 % 4. Hilfsbefehl zum Drucken einer einzelnen Lösung
 \cs_new:Npn \schooltex_print_single_sol:n #1

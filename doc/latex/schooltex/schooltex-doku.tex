@@ -407,13 +407,19 @@ Die Lösung darf Absätze und Teilaufgaben enthalten. Mit \cs{printsols} werden 
 Lösungen später ausgegeben, meist am Dokumentende oder auf einer eigenen Seite.
 
 \begin{befehl}{\textbackslash solution\{Lösung\} \\
-\textbackslash printsols \quad \textbackslash printsols[Nummer] \quad \textbackslash printsols[last]}\end{befehl}
+\textbackslash printsols \quad \textbackslash printsols[Nummer] \quad \textbackslash printsols[last] \quad \textbackslash printsols[inline]}\end{befehl}
 
 \begin{itemize}
   \item \cs{printsols} gibt alle Lösungen aus.
   \item \cs{printsols}\texttt{[2]} gibt nur die Lösung zu Aufgabe 2 aus.
   \item \cs{printsols}\texttt{[last]} gibt nur die Lösung zur zuletzt gesetzten Aufgabe aus,
         praktisch direkt nach der Aufgabe.
+  \item \cs{printsols}\texttt{[inline]} druckt jede Lösung direkt unter ihre Aufgabe
+        (Überschrift \enquote{Lösung:}). Steht der Befehl vor den Aufgaben, wirkt er sofort.
+        Ersetzt er das \cs{printsols} am Dokumentende, wirkt er nach erneutem Übersetzen
+        für alle Aufgaben (\texttt{latexmk} übersetzt automatisch erneut). Im Inline-Modus
+        geben die übrigen \cs{printsols}-Aufrufe nichts aus, so entsteht aus einem Blatt
+        ohne weitere Änderungen eine Lösungsfassung.
 \end{itemize}
 
 \begin{code}

@@ -31,7 +31,8 @@
 
 % Label, Anker und TOC-Eintrag werden per pagecommand auf die erste
 % eingefügte Seite gesetzt (vor \includepdf landeten sie wegen dessen
-% \clearpage auf der Seite davor).
+% \clearpage auf der Seite davor). \thispagestyle{empty} ist der pdfpages-Default
+% für pagecommand und muss mit angegeben werden, sonst druckt die Kopfzeile über das AB.
 \bool_new:N \g__school_ab_first_bool
 \cs_new_protected:Npn \__school_ab_mark:n #1
 {
@@ -53,11 +54,11 @@
   \cs_if_exist:cTF { Path } {
     \bool_gset_true:N \g__school_ab_first_bool
     \str_case:VnF \l_school_mode_tl {
-      { small }          { \includepdf[pages=-, nup=2x1, doublepages, landscape, frame, pagecommand={\__school_ab_mark:n {#2}}]{\Path/#2/#2} }
-        { smalllandscape }  { \includepdf[pages=-, nup=1x2, doublepages, frame, pagecommand={\__school_ab_mark:n {#2}}]{\Path/#2/#2} }
-        { landscape }       { \includepdf[pages=-, landscape, pagecommand={\__school_ab_mark:n {#2}}]{\Path/#2/#2} }
+      { small }          { \includepdf[pages=-, nup=2x1, doublepages, landscape, frame, pagecommand={\thispagestyle{empty}\__school_ab_mark:n {#2}}]{\Path/#2/#2} }
+        { smalllandscape }  { \includepdf[pages=-, nup=1x2, doublepages, frame, pagecommand={\thispagestyle{empty}\__school_ab_mark:n {#2}}]{\Path/#2/#2} }
+        { landscape }       { \includepdf[pages=-, landscape, pagecommand={\thispagestyle{empty}\__school_ab_mark:n {#2}}]{\Path/#2/#2} }
     }
-    { \includepdf[pages=-, pagecommand={\__school_ab_mark:n {#2}}]{\Path/#2/#2} } % Default-Fall (F-Zweig von str_case)
+    { \includepdf[pages=-, pagecommand={\thispagestyle{empty}\__school_ab_mark:n {#2}}]{\Path/#2/#2} } % Default-Fall (F-Zweig von str_case)
   }{
     \PackageError{schooltex}{Path not set.}{Setze \string\Path.}
   }

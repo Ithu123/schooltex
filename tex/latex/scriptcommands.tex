@@ -303,9 +303,13 @@
   \textcolor{blue!70!black}{\enspace\leaders\hrule height 0.4pt\hfill\kern0pt}%
   \par\vspace{2pt}%
 }
-% --- Bildbreite als Länge ---
+% --- Bildbreiten und Abstände als Längen ---
 \newlength{\Vbildbreite}
-\setlength{\Vbildbreite}{0.45\linewidth}  % Default
+\setlength{\Vbildbreite}{0.45\linewidth}   % Default-Breite *innerhalb* von Vbilder
+\newlength{\Vbildbreiteeinzeln}
+\setlength{\Vbildbreiteeinzeln}{0.45\linewidth}  % Default-Breite für ein einzelnes \Vbild
+\newlength{\Vbildabstand}
+\setlength{\Vbildabstand}{1.5ex}           % vertikaler Abstand zwischen zwei Bildreihen
 
 % --- keyvals für \Vbild ---
 
@@ -314,31 +318,60 @@
 \define@key{Vbild}{label}{\def\Vbild@label{#1}}
 \define@key{Vbild}{width}{\def\Vbild@width{#1}}
 
-% --- Umgebung für mehrere Bilder ---
+% Schalter: wahr genau dann, wenn wir in der Umgebung Vbilder stecken
+\newif\ifVbild@reihe
+\Vbild@reihefalse
+
+% --- Umgebung für mehrere Bilder (Reihensatz) ---
 \NewDocumentEnvironment{Vbilder}{O{0.45}}{%
-  \setlength{\Vbildbreite}{#1\linewidth}%
-  \centering%
   \par\vspace{0.5ex}%
+  \setlength{\Vbildbreite}{#1\linewidth}%
+  \Vbild@reihetrue
+  \centering
+  % Abstand zwischen umgebrochenen Bildreihen erzwingen
+  \setlength{\lineskip}{\Vbildabstand}%
+  \setlength{\lineskiplimit}{\maxdimen}%
+  \ignorespaces
 }{%
-  \par%
+  \ifhmode\unskip\fi   % abschließendes \hfill entfernen -> letzte Reihe bleibt zentriert
+  \par\vspace{0.5ex}%
+}
+
+% --- Inhalt eines Bildes (gemeinsam für beide Fälle) ---
+\newcommand{\Vbild@inhalt}{%
+  \begin{minipage}{\Vbild@width}%
+    \centering
+    \includegraphics[width=\linewidth]{\Vbild@datei}%
+    \ifx\Vbild@caption\empty\else
+      \captionof{figure}{\Vbild@caption}%
+    \fi
+    \ifx\Vbild@label\empty\else
+      \label{\Vbild@label}%
+    \fi
+  \end{minipage}%
 }
 
 % --- Einzelnes Bild ---
+% In der Umgebung Vbilder: Reihensatz (mehrere Bilder nebeneinander, Umbruch automatisch)
+% Außerhalb: eigener, zentrierter Absatz
 \NewDocumentCommand{\Vbild}{O{}m}{%
   \def\Vbild@caption{}%
   \def\Vbild@label{}%
-  \edef\Vbild@width{\the\Vbildbreite}%
+  \def\Vbild@datei{#2}%
+  \ifVbild@reihe
+    \edef\Vbild@width{\the\Vbildbreite}%
+  \else
+    \edef\Vbild@width{\the\Vbildbreiteeinzeln}%
+  \fi
   \setkeys{Vbild}{#1}%
-  \begin{minipage}{\Vbild@width}%
-    \centering%
-    \includegraphics[width=\linewidth]{#2}%
-    \ifx\Vbild@caption\empty\else%
-      \captionof{figure}{\Vbild@caption}%
-    \fi%
-    \ifx\Vbild@label\empty\else%
-      \label{\Vbild@label}%
-    \fi%
-  \end{minipage}\hfill%
+  \ifVbild@reihe
+    \Vbild@inhalt\hfill
+  \else
+    \par\vspace{0.5ex}%
+    {\centering\Vbild@inhalt\par}%
+    \vspace{0.5ex}%
+  \fi
+  \ignorespaces
 }
 
 \makeatother

@@ -20,6 +20,38 @@
 \UseTblrLibrary{varwidth, siunitx} % siunitx hinzugefügt, da du \si{\minute} nutzt!
 \RequirePackage{tcolorbox}
 \tcbuselibrary{skins,breakable}
+
+% --- Schneller kompilieren: TikZ-Bilder zwischenspeichern (memoize) ---
+% Problem: TikZ ist der größte Zeitfresser beim Kompilieren (gemessen am LK-Skript
+% "Schwingungen und Wellen": 20 s pro Durchlauf, davon ca. 10 s nur für die TikZ-Bilder).
+% Lösung: memoize setzt jedes tikzpicture einmal, speichert es als kleine PDF und bindet
+% ab dem nächsten Durchlauf nur noch diese PDF ein (dort dann ca. 10 s statt 20 s).
+% Ändert man ein Bild, erkennt memoize das (Prüfsumme über den Code) und setzt es neu.
+% Am fertigen PDF ändert sich nichts (Seitenvergleich: Abweichung < 1 Pixel).
+%
+% Voraussetzungen:
+%   - Python-Modul pdfrw zum Ausschneiden der Bilder:  sudo dnf install python3-pdfrw
+%     (memoize-extract.py darf auch ohne -shell-escape laufen, steht in shell_escape_commands)
+%   - Die zwischengespeicherten Bilder liegen neben dem Dokument in <Dateiname>.memo.dir/
+%     und in <Dateiname>.mmz. Beides darf jederzeit gelöscht werden (dann wird neu gesetzt)
+%     und gehört nicht ins Git (siehe .gitignore).
+%
+% Abschalten für ein einzelnes Dokument: \usepackage[nomemoize]{schooltex}
+\newif\ifschooltex@memoize
+\schooltex@memoizetrue
+
+\DeclareOption{nomemoize}{\schooltex@memoizefalse}
+\ProcessOptions\relax
+\ifschooltex@memoize
+  \RequirePackage[extract=python]{memoize}
+  % tcolorbox zeichnet die Rahmen seiner Boxen (z. B. \tafel) selbst mit einem tikzpicture,
+  % öffnet es aber in der internen Umgebung tcb@drawing. memoize sucht dann vergeblich das
+  % passende \end{tikzpicture} und bricht mit "ended as tcb@drawing" ab. Deshalb wird memoize
+  % nur beim Zeichnen dieser Rahmen abgeschaltet. TikZ-Bilder *im Inhalt* einer Box werden
+  % vorher gesetzt und bleiben zwischengespeichert.
+  \AddToHook{env/tcb@drawing/begin}{\mmzset{disable}}
+\fi
+
 \RequirePackage{soul}
 \RequirePackage[hypcap=false]{caption}
 

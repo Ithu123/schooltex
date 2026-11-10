@@ -32,6 +32,10 @@
 \fi
 
 {\centering
+% memoize sieht hier immer denselben Code (Höhe steckt nur im Makro \gridheight)
+% und würde sonst jedes Grid durch das erste zwischengespeicherte ersetzen.
+% Das Grid ist billig -> hier nicht zwischenspeichern (wirkt nur in dieser Gruppe).
+\ifdefined\mmzset\mmzset{disable}\fi
 \begin{tikzpicture}
   \tikz 
   \coordinate (A) at (canvas cs:x=\gridwidth,y=\gridheight) {};
